@@ -17,4 +17,11 @@ Project Structure
 
 Team Members
 ==========
+Matt Fach
+Arvind Rao
+John Gamboa
+Jonathan Lee
+James Delaplane
+Soham Jatakia
+Spencer Cornett
 
