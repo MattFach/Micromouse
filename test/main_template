@@ -1,0 +1,90 @@
+const int sense_1 = 4, sense_2 = 5, sense_3 = 8, sense_4 = 9, sense_5 = 3;  // IR sensor pins
+
+const int L_encoder1 = 1, L_encoder2 = 14;   // left encoder pins
+
+const int R_encoder1 = 0, R_encoder2 = 31;  // right encoder pins
+
+const int R_enable = 10, L_enable = 11;        // motor enable pins
+
+const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pins
+
+const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
+
+const int R_fwd = 13, R_bkw = 12, L_fwd = 6, L_bkw = 7;  // (verify)  motor direction pins
+
+int R_enable_val = 65535;  // initialize enable values high
+int L_enable_val = 65535;
+
+volatile int R_encoder_val = 0;  // declare encoder interrupt values
+volatile int L_encoder_val = 0;
+
+
+void setup()
+{
+  
+  pinMode(sense_1, INPUT_ANALOG);
+  pinMode(sense_2, INPUT_ANALOG);
+  pinMode(sense_3, INPUT_ANALOG);
+  pinMode(sense_4, INPUT_ANALOG);
+  pinMode(sense_5, INPUT_ANALOG);
+  
+  attachInterrupt(L_encoder1, left_interrupt, RISING);  // may need to adjust encoder operation
+  attachInterrupt(L_encoder2, left_interrupt, RISING);
+  attachInterrupt(R_encoder1, right_interrupt, RISING);
+  attachInterrupt(R_encoder2, right_interrupt, RISING);  // comment out interrupts not used
+
+  pinMode(R_enable, PWM);
+  pinMode(L_enable, PWM);
+  
+  pinMode(led1, PWM);         // configure first two test LEDs as PWM outs
+  pinMode(led2, PWM);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
+  pinMode(led5, OUTPUT);
+  
+  pinMode(switch1, INPUT);
+  pinMode(switch2, INPUT);
+  pinMode(switch3, INPUT);
+  pinMode(switch4, INPUT);
+  pinMode(switch5, INPUT);
+  
+  pinMode(R_fwd, OUTPUT);
+  pinMode(R_bkw, OUTPUT);
+  pinMode(L_fwd, OUTPUT);
+  pinMode(L_bkw, OUTPUT);
+  
+  
+  
+}
+
+
+void loop()
+{
+  
+  /* 
+	 // figure out how fast mouse can slow down 
+	 // need decision(algorithm) function 
+	 // need mapping function 
+	 // need turning functions 
+	 // need exploration(algorithm) function 
+	 // need stright line function
+	 // need race function (premapped maze) <- shortest path
+	 // ^ race function may need to be called at dead end (to find closest door)
+   
+  
+  
+  */
+  
+  
+  
+}
+
+void left_interrupt()
+{
+  ++ L_encoder_val;
+}
+
+void right_interrupt()
+{
+  ++ R_encoder_val;
+}
