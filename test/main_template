@@ -65,9 +65,10 @@ void loop()
 	 // figure out how fast mouse can slow down 
 	 // need decision(algorithm) function 
 	 // need mapping function 
+	 // need function to determine current grid location
 	 // need turning functions 
 	 // need exploration(algorithm) function 
-	 // need stright line function
+	 // need straight line function
 	 // need race function (premapped maze) <- shortest path
 	 // ^ race function may need to be called at dead end (to find closest door)
    
