@@ -4,7 +4,7 @@ const int L_encoder1 = 1, L_encoder2 = 14;   // left encoder pins
 
 const int R_encoder1 = 0, R_encoder2 = 31;  // right encoder pins
 
-const int R_enable = 10, L_enable = 11;        // motor enable pins
+const int right_enable = 10, left_enable = 11;        // motor enable pins
 
 const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pins
 
@@ -33,8 +33,8 @@ void setup()
   attachInterrupt(R_encoder1, right_interrupt, RISING);
   attachInterrupt(R_encoder2, right_interrupt, RISING);  // comment out interrupts not used
 
-  pinMode(R_enable, PWM);
-  pinMode(L_enable, PWM);
+  pinMode(right_enable, PWM);
+  pinMode(left_enable, PWM);
   
   pinMode(led1, PWM);         // configure first two test LEDs as PWM outs
   pinMode(led2, PWM);
