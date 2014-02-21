@@ -23,5 +23,5 @@ John Gamboa
 Jonathan Lee
 James Delaplane
 Soham Jatakia
-Spencer Cornett
+Spenser Cornett
 
