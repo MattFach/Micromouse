@@ -1,5 +1,7 @@
 // COMMENT
 
+YAAAAA FUAKCKKKC YAAA!!!!!!  SUCK MY DICKS!
+
 const int sense_1 = 4, sense_2 = 5, sense_3 = 8, sense_4 = 9, sense_5 = 3;  // IR sensor pins
 
 const int L_encoder1 = 1, L_encoder2 = 14;   // left encoder pins
