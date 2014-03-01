@@ -1,4 +1,7 @@
-void drive_straight(int left45_sensor, int left90_sensor, int right45_sensor, int right90_sensor) // 2 or 4 sensors?
+//i want your penis in my mouth
+
+
+1void drive_straight(int left45_sensor, int left90_sensor, int right45_sensor, int right90_sensor) // 2 or 4 sensors?
 {
                                            // analog read values of 2 or 4 sensors passed to function
   static int previous_error = 0;
