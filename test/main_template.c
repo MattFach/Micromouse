@@ -9,13 +9,13 @@ const int L_encoder1 = 1, L_encoder2 = 14;   // left encoder pins
 
 const int R_encoder1 = 0, R_encoder2 = 31;  // right encoder pins
 
-const int right_enable = 10, left_enable = 11;        // motor enable pins
+const int right_enable = 10, left_enable = 7;        // motor enable pins
 
 const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pins
 
 const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
 
-const int R_fwd = 13, R_bkw = 12, L_fwd = 6, L_bkw = 7;  // (verify)  motor direction pins
+const int R_fwd = 12, R_bkw = 13, L_fwd = 11, L_bkw = 6;  // (verify)  motor direction pins
 
 int R_enable_val = 65535;  // initialize enable values high
 int L_enable_val = 65535;
