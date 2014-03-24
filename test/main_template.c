@@ -68,6 +68,7 @@ void loop()
   
   
 	 motor_test();
+	 spin();
 	 /*
 	 // figure out how fast mouse can slow down 
 	 // need decision(algorithm) function 
@@ -139,4 +140,90 @@ void motor_test()  // motor testing function
   
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
+}
+
+void turn_left() // point turn
+{
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  pwmWrite(right_enable, HIGH);
+  pwmWrite(left_enable, HIGH);
+  
+  digitalWrite(R_fwd, HIGH);
+  
+  digitalWrite(L_bkw, HIGH);
+  
+  delay(1500);  // tune this value for complete turn
+
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_bkw, LOW);
+}
+
+void turn_right()  // point turn
+{
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  pwmWrite(right_enable, HIGH);
+  pwmWrite(left_enable, HIGH);
+  
+  digitalWrite(L_fwd, HIGH);
+  
+  digitalWrite(R_bkw, HIGH);
+  
+  delay(1500);  // tune this value for complete turn
+
+  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_bkw, LOW);
+}
+
+void left()  // arced turn
+{
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  pwmWrite(right_enable, HIGH);
+  pwmWrite(left_enable, 20000);  // may want to hault or move? (test)
+  
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_fwd, HIGH);
+
+  delay(1500);  // tune this value for complete turn
+
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+}
+
+void right() // arced turn
+{
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  pwmWrite(right_enable, 20000);  // may want to hault or move? (test)
+  pwmWrite(left_enable, HIGH);
+  
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_fwd, HIGH);
+
+  delay(1500);  // tune this value for complete turn
+
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+}
+
+void spin()  // because, why not?
+{
+  	while(1)
+  	{
+  		turn_left();
+  	}
 }
