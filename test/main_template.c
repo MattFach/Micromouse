@@ -23,6 +23,21 @@ int L_enable_val = 65535;
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
 
+struct node     // declare node struct to build maze
+{
+  int distance;
+  int section;
+  
+  bool traveled_to;
+  
+  struct node* up;
+  struct node* down;
+  struct node* left;
+  struct node* right;
+};
+
+struct node maze[16][16];  // declare maze
+
 
 void setup()
 {
@@ -57,6 +72,8 @@ void setup()
   pinMode(R_bkw, OUTPUT);
   pinMode(L_fwd, OUTPUT);
   pinMode(L_bkw, OUTPUT);
+  
+  initialize_map(maze);  // initialize maze
   
   
   
@@ -226,4 +243,103 @@ void spin()  // because, why not?
   	{
   		turn_left();
   	}
+}
+
+void initialize_map(struct node maze[16][16])   // function to initialize maze
+{
+  int i, j, reference;
+  
+  for(i = 0; i < 16; i++)
+  {
+    for(j = 0; j < 16; j++)
+    {
+      maze[i][j].traveled_to = false;   // initialize every node as having not been traveled to
+      
+      if(i <= 6 && j <=6)  // assign every node to a fundamental maze section
+      {
+        maze[i][j].section = 1;
+      }
+      
+      else if(i <= 8 && j <=6)
+      {
+        maze[i][j].section = 2;
+      }
+      
+      else if(i <= 15 && j <= 6)
+      {
+        maze[i][j].section = 3;
+      }
+      
+      else if(i <= 6 && j <= 8)
+      {
+        maze[i][j].section = 4;
+      }
+      
+      else if(i <= 8 && j <= 8)
+      { 
+        maze[i][j].section = 0;
+      }
+      
+      else if(i <= 15 && j <= 8)
+      {
+        maze[i][j].section = 5;
+      }
+      
+      else if(j <= 6)
+      {
+        maze[i][j].section = 6;
+      }
+      
+      else if(j <= 8)
+      {
+        maze[i][j].section = 7;
+      }
+      
+      else maze[i][j].section = 8;
+      
+      if(i > 0)  // link node to the node left of it
+      {
+        maze[i][j].left = &maze[i-1][j];
+      }
+      
+      if(j > 0)  // link node to the node below it
+      {
+        maze[i][j].down = &maze[i][j-1];
+      }
+      
+      if(j < 15)  // link node to the node above it
+      {
+        maze[i][j].up = &maze[i][j+1];
+      }
+      
+      if(i < 15)  // link node to the node right of it
+      {
+        maze[i][j].right = &maze[i+1][j];
+      }
+    }
+  }
+  
+  for(reference = 0; reference < 8; reference++)  // assign a distance to all nodes from the center
+  {
+    for(i = reference; i < 15 - reference; i++)
+    {
+      maze[reference][i].distance = (7 - reference);
+    }
+    
+    for(j = reference; j < 15 - reference; j++)
+    {
+      maze[j][i].distance = (7 - reference);
+    }
+    
+    for(; i > reference; i--)
+    {
+      maze[j][i].distance = (7 - reference);
+    }
+    
+    for(; j > reference; j--)
+    {
+      maze[j][i].distance = (7 - reference);
+    }
+  }
+  
 }
