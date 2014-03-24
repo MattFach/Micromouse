@@ -66,7 +66,9 @@ void setup()
 void loop()
 {
   
-  /* 
+  
+	 motor_test();
+	 /*
 	 // figure out how fast mouse can slow down 
 	 // need decision(algorithm) function 
 	 // need mapping function 
@@ -93,4 +95,48 @@ void left_interrupt()
 void right_interrupt()
 {
   ++ R_encoder_val;
+}
+
+void motor_test()  // motor testing function
+{
+  pwmWrite(right_enable, R_enable_val);
+  pwmWrite(left_enable, L_enable_val);
+  
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_fwd, HIGH);
+  
+  delay(1000);
+  
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_bkw, HIGH);
+  
+  delay(1000);
+  
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_bkw, HIGH);
+  digitalWrite(L_fwd, HIGH);
+  
+  delay(1000);
+  
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_fwd, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_bkw, HIGH);
+  digitalWrite(L_bkw, LOW);
+  
+  delay(1000);
+  
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
 }
