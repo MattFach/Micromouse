@@ -3,6 +3,9 @@ struct node  // define struct variable type for nodes to build maze
   int distance;
   int section;
   
+  int row;
+  int column;
+  
   bool traveled_to;
   
   struct node* up;
@@ -23,6 +26,10 @@ void initialize_map(struct node maze[16][16])  // function to initialize maze
     for(j = 0; j < 16; j++)
     {
       maze[i][j].traveled_to = false;  // mark all nodes as having not been traveled to
+      
+      maze[i][j].row = j;
+      
+      maze[i][j].column = i;
       
       if(i <= 6 && j <=6)  // assign every node to a fundamental maze section
       {
