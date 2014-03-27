@@ -103,20 +103,28 @@ void initialize_map(struct node maze[16][16])  // function to initialize maze
         maze[i][j].left = &maze[i-1][j];
       }
       
+      else maze[i][j].left = 0;
+      
       if(j > 0)  // link node to the node below it
       {
         maze[i][j].down = &maze[i][j-1];
       }
+      
+      else maze[i][j].down = 0;
       
       if(j < 15)  // link node to the node above it
       {
         maze[i][j].up = &maze[i][j+1];
       }
       
+      else maze[i][j].up = 0;
+      
       if(i < 15)  // link node to the node right of it
       {
         maze[i][j].right = &maze[i+1][j];
       }
+      
+      else maze[i][j].right = 0;
     }
   }
   
