@@ -76,9 +76,9 @@ void setup()
   
   SerialUSB.println("hello world");
   
-  SerialUSB.println(sizeof(struct node));
+  //SerialUSB.println(sizeof(struct node));
   
-  SerialUSB.println(sizeof(maze));
+  //SerialUSB.println(sizeof(maze));
   
   while(1);
   
