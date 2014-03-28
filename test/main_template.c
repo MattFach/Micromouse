@@ -25,8 +25,11 @@ volatile int L_encoder_val = 0;
 
 typedef struct node
   {
-  int distance;
-  int section;
+  short int distance;
+  short int section;
+  
+  short int row;
+  short int column;
 
   bool traveled_to;
   bool traced;
