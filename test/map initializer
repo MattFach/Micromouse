@@ -1,7 +1,7 @@
 struct node  // define struct variable type for nodes to build maze
 {
   int distance;
-  int section;
+  char section;
   
   int row;
   int column;
@@ -35,70 +35,70 @@ void initialize_map(struct node maze[16][16])  // function to initialize maze
       
       if(i <= 6 && j <=6)  // assign every node to a fundamental maze section
       {
-        maze[i][j].section = 1;
+        maze[i][j].section = a;
       }
       
       else if(i <= 6 && j <= 7)
       {
-        maze[i][j].section = 2;
+        maze[i][j].section = b;
       }
       
       else if(i <= 6 && j <= 8)
       {
-        maze[i][j].section = 3;
+        maze[i][j].section = c;
       }
       
       else if(i <= 6 && j <= 15)
       {
-        maze[i][j].section = 4;
+        maze[i][j].section = d;
       }
       
       else if(i <= 7 && j <= 6)
       { 
-        maze[i][j].section = 5;
+        maze[i][j].section = e;
       }
       
       else if(i <= 7 && j <= 7)
       {
-        maze[i][j].section = 0;
+        maze[i][j].section = x;
       }
       
       else if(i <= 7 && j <= 15)
       {
-        maze[i][j].section = 6;
+        maze[i][j].section = f;
       }
       
       else if(i <= 8 && j <= 6)
       {
-        maze[i][j].section = 7;
+        maze[i][j].section = g;
       }
       
       else if(i <= 8 && j <= 8)
       {
-        maze[i][j].section = 0;
+        maze[i][j].section = x;
       }
       
       else if(i <= 8 && j <= 15)
       {
-        maze[i][j].section = 8;
+        maze[i][j].section = h;
       }
       
       else if(j <= 6)
       {
-        maze[i][j].section = 9;
+        maze[i][j].section = i;
       }
       
       else if(j <= 7)
       {
-        maze[i][j].section = 10;
+        maze[i][j].section = j;
       }
       
       else if(j <= 8)
       {
-        maze[i][j].section = 11;
+        maze[i][j].section = k;
       }
       
-      else maze[i][j].section = 12;
+      else maze[i][j].section = l;
       
       if(i > 0)  // link node to the node left of it
       {
