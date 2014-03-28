@@ -23,6 +23,22 @@ int L_enable_val = 65535;
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
 
+typedef struct node
+  {
+  int distance;
+  int section;
+
+  bool traveled_to;
+  bool traced;
+  
+  struct node* up;
+  struct node* down;
+  struct node* left;
+  struct node* right;
+  };
+
+  struct node maze[16][16];
+
 
 void setup()
 {
@@ -68,30 +84,8 @@ void setup()
 void loop()
 {
   
-  static int i = 1;
-	// motor_test();
-	// spin();
-	
-if(i)
-{
 
-typedef struct node
-  {
-  int distance;
-  int section;
 
-  bool traveled_to;
-  bool traced;
-  
-  struct node* up;
-  struct node* down;
-  struct node* left;
-  struct node* right;
-  };
-
-  struct node maze[16][16];
-  i--;
-}
 
   SerialUSB.print(sizeof(struct node));
   
