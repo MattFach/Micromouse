@@ -58,7 +58,27 @@ void setup()
   pinMode(L_fwd, OUTPUT);
   pinMode(L_bkw, OUTPUT);
   
-  initialize_map(maze);  // initialize maze
+  typedef struct node
+  {
+  int distance;
+  int section;
+
+  bool traveled_to;
+  bool traced;
+  
+  struct node* up;
+  struct node* down;
+  struct node* left;
+  struct node* right;
+  };
+
+  struct node maze[16][16];
+  
+  SerialUSB.println(sizeof(struct node));
+  
+  SerialUSB.println(sizeof(maze));
+  
+  while(1);
   
   
   
