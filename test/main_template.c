@@ -74,6 +74,8 @@ void setup()
 
   struct node maze[16][16];
   
+  SerialUSB.println("hello world")
+  
   SerialUSB.println(sizeof(struct node));
   
   SerialUSB.println(sizeof(maze));
