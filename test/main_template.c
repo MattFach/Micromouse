@@ -58,7 +58,24 @@ void setup()
   pinMode(L_fwd, OUTPUT);
   pinMode(L_bkw, OUTPUT);
   
-  typedef struct node
+ 
+  
+  //SerialUSB.println("hello world");
+  
+}
+
+
+void loop()
+{
+  
+  static int i = 1;
+	// motor_test();
+	// spin();
+	
+if(i)
+{
+
+typedef struct node
   {
   int distance;
   int section;
@@ -73,26 +90,15 @@ void setup()
   };
 
   struct node maze[16][16];
-  
-  SerialUSB.println("hello world");
-  
-  //SerialUSB.println(sizeof(struct node));
-  
-  //SerialUSB.println(sizeof(maze));
-  
-  while(1);
-  
-  
-  
+  i--;
 }
 
-
-void loop()
-{
+  SerialUSB.print(sizeof(struct node));
   
+  SerialUSB.print("  ");
   
-	 motor_test();
-	 spin();
+  SerialUSB.println(sizeof(maze));
+  
 	 /*
 	 // figure out how fast mouse can slow down 
 	 // need decision(algorithm) function 
