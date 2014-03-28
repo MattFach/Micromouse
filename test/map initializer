@@ -7,6 +7,7 @@ struct node  // define struct variable type for nodes to build maze
   int column;
   
   bool traveled_to;
+  bool traced;
   
   struct node* up;
   struct node* down;
@@ -26,6 +27,7 @@ void initialize_map(struct node maze[16][16])  // function to initialize maze
     for(j = 0; j < 16; j++)
     {
       maze[i][j].traveled_to = false;  // mark all nodes as having not been traveled to
+      maze[i][j].traced = false;
       
       maze[i][j].row = j;
       
@@ -130,24 +132,24 @@ void initialize_map(struct node maze[16][16])  // function to initialize maze
   
   for(reference = 0; reference < 8; reference++)  // assign a distance from the center to every node
   {
-    for(i = reference; i < 15 - reference; i++)
+    for(i = reference; i < 15 - reference; i++)  // distances must be scaled to not outweigh current distances**
     {
-      maze[reference][i].distance = (7 - reference);
+      maze[reference][i].distance = (14 - 2*reference);
     }
     
     for(j = reference; j < 15 - reference; j++)
     {
-      maze[j][i].distance = (7 - reference);
+      maze[j][i].distance = (14 - 2*reference);
     }
     
     for(; i > reference; i--)
     {
-      maze[j][i].distance = (7 - reference);
+      maze[j][i].distance = (14 - 2*reference);
     }
     
     for(; j > reference; j--)
     {
-      maze[j][i].distance = (7 - reference);
+      maze[j][i].distance = (14 - 2*reference);
     }
   }
   
