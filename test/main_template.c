@@ -280,9 +280,9 @@ void GoStraight()
 {
 int currentVoltage;
 int voltageChange = 5;
-int D1 = pwmRead(L45sensor) - pwmRead(R45sensor);
+int D1 = analogRead(L45sensor) - analogRead(R45sensor);
 delay(20);						//  delay MIGHT need to be longer
-int D2 = pwmRead(L45sensor) - pwmRead(R45sensor);
+int D2 = analogRead(L45sensor) - analogRead(R45sensor);
 
 if(D1 == D2)
 ;
@@ -303,15 +303,15 @@ ChangeLeft(voltageChange);
 
 void ChangeRight(int & change)
 {
-int currentVoltage = pwmRead(RightMotor);
-if(currentVoltage == 0 || currentVoltage == 50000)  //change 1020 value to max 
+int currentVoltage = analogRead(RightMotor);
+if(currentVoltage == 0 || currentVoltage > 3800)  //change 1020 value to max 
 change = -change;                                             //voltage wanted
-pwmWrite(RightMotor, currentVoltage + change);
+pwmWrite(RightMotor, currentVoltage*16 + change);
 }
 void ChangeLeft(int & change)
 {
-int currentVoltage = pwmRead(LeftMotor);
-if(currentVoltage == 0 || currentVoltage == 50000)  //change 1020 value to max 
+int currentVoltage = analogRead(LeftMotor);
+if(currentVoltage == 0 || currentVoltage > 3800)  //change 1020 value to max 
 change = -change;                                             //voltage wanted
-pwmWrite(LeftMotor, currentVoltage + change);
+pwmWrite(LeftMotor, currentVoltage*16 + change);
 }
