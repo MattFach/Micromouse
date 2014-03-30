@@ -254,3 +254,43 @@ void spin()  // because, why not?
   		turn_left();
   	}
 }
+
+void GoStraight()
+{
+int currentVoltage;
+int voltageChange = 5;
+int D1 = pwmRead(L45sensor) - pwmRead(R45sensor);
+delay(20);
+int D2 = pwmRead(L45sensor) - pwmRead(R45sensor);
+
+if(D1 == D2)
+;
+else if(D1 < D2)
+{
+if(voltageChange < 0)
+ChangeLeft(voltageChange);
+else
+ChangeRight(voltageChange);
+}
+else if(D1 > D2)
+{
+if(voltageChange < 0)
+ChangeRight(voltageChange);
+else
+ChangeLeft(voltageChange);
+}
+
+void ChangeRight(int & change)
+{
+int currentVoltage = pwmRead(RightMotor);
+if(currentVoltage == 0 || currentVoltage == 50000)  //change 1020 value to max 
+change = -change;                                             //voltage wanted
+pwmWrite(RightMotor, currentVoltage + change);
+}
+void ChangeLeft(int & change)
+{
+int currentVoltage = pwmRead(LeftMotor);
+if(currentVoltage == 0 || currentVoltage == 50000)  //change 1020 value to max 
+change = -change;                                             //voltage wanted
+pwmWrite(LeftMotor, currentVoltage + change);
+}
