@@ -3,6 +3,7 @@
 //CHECKING IF THE BRANCHING IS WORKING>
 
 // MATT!!  read the turn_left and turn_right functions to figure out what you need to tune
+// MATT!!  also read the loop to find values that need tuning
 
 const int L90sensor = 4;   //  James's pin declarations
 const int R90sensor = 3;
@@ -98,7 +99,11 @@ void loop()
 {
   
 
-	int left, right, straight;
+	int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
+				    // and right90 is pin 3
+				    // if this isn't true, change the pin declarations up top
+				    // (BOTH mine and James's)
+				    // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
 	
 	left = analogRead(sense_1);
 	right = analogRead(sense_5);
