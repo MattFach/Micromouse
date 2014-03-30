@@ -88,8 +88,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(R_enable, 45000);
-  pwmWrite(L_enable, 45000);
+  pwmWrite(R_enable, 50000);
+  pwmWrite(L_enable, 50000);
   //SerialUSB.println("hello world");
   
 }
@@ -229,8 +229,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 45000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 50000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 50000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -252,8 +252,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 45000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 50000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 50000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -304,14 +304,14 @@ ChangeLeft(voltageChange);
 void ChangeRight(int & change)
 {
 int currentVoltage = analogRead(RightMotor);
-if(currentVoltage == 0 || currentVoltage > 3800)  //change 1020 value to max 
+if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
 change = -change;                                             //voltage wanted
 pwmWrite(RightMotor, currentVoltage*16 + change);
 }
 void ChangeLeft(int & change)
 {
 int currentVoltage = analogRead(LeftMotor);
-if(currentVoltage == 0 || currentVoltage > 3800)  //change 1020 value to max 
+if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
 change = -change;                                             //voltage wanted
 pwmWrite(LeftMotor, currentVoltage*16 + change);
 }
