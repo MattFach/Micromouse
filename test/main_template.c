@@ -15,10 +15,10 @@ const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pi
 
 const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
 
-const int R_fwd = 12, R_bkw = 13, L_fwd = 11, L_bkw = 6;  // (verify)  motor direction pins
+const int R_fwd = 13, R_bkw = 12, L_fwd = 6, L_bkw = 11;  // (verify)  motor direction pins
 
-int R_enable_val = 65535;  // initialize enable values high
-int L_enable_val = 65535;
+int R_enable_val = 50000;  // initialize enable values high
+int L_enable_val = 50000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -183,7 +183,7 @@ void turn_left() // point turn
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn
+  delay(1500);  // tune this value for complete turn*************
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -203,7 +203,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn
+  delay(1500);  // tune this value for complete turn*******
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
