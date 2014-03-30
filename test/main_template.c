@@ -2,6 +2,15 @@
 
 //CHECKING IF THE BRANCHING IS WORKING>
 
+// MATT!!  read the turn_left and turn_right functions to figure out what you need to tune
+
+const int L90sensor = 4;   //  James's pin declarations
+const int R90sensor = 3;
+const int L45sensor = 5;
+const int R45sensor = 9;
+const int LeftMotor = 7;
+const int RightMotor = 10;
+
 
 const int sense_1 = 4, sense_2 = 5, sense_3 = 8, sense_4 = 9, sense_5 = 3;  // IR sensor pins
 
@@ -40,7 +49,7 @@ typedef struct node
   struct node* right;
   };
 
-  struct node maze[16][16];
+  //struct node maze[16][16];
 
 
 void setup()
@@ -78,7 +87,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  
+  pwmWrite(R_enable, 45000);
+  pwmWrite(L_enable, 45000);
   //SerialUSB.println("hello world");
   
 }
@@ -88,13 +98,51 @@ void loop()
 {
   
 
+	int left, right, straight;
+	
+	left = analogRead(sense_1);
+	right = analogRead(sense_5);
+	straight = analogRead(sense_3);
+	
+	if(straight < 4000)     // if the mouse gets too close to the wall before turning, decrease the value
+	{			// if the mouse starts to turn before getting close enough, increase delay
+				// delay can be found in the next three if statements, all delay functions
+				// must have the same delqy value;
+		
+		digitalWrite(R_bkw, LOW);
+  		digitalWrite(L_bkw, LOW);
+		digitalWrite(R_fwd, HIGH);
+  		digitalWrite(L_fwd, HIGH);
+		
+		GoStraight();
+		
+		
+	}
+	
+	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
+	{			// if the mouse turns where it shouldnt, decrease the value (including below)
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_right;
+	}
+	
+	else if(left < 3000)  //  if the mouse doesnt see the opening, increase the value
+	{			// if the mouse turns where it shouldnt, decrease the value
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_left();
+	}
+	
+	else
+	{
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_left();
+		turn_left();
+	}
 
-
-  SerialUSB.print(sizeof(struct node));
-  
-  SerialUSB.print("  ");
-  
-  SerialUSB.println(sizeof(maze));
   
 	 /*
 	 // figure out how fast mouse can slow down 
@@ -176,14 +224,17 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, HIGH);
-  pwmWrite(left_enable, HIGH);
+  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 45000);	  // decrese the value for a slower turn, increase it to go faster
+  
+  delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
+  	       // before slowing down enough (same thing in turn_right)
   
   digitalWrite(R_fwd, HIGH);
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn*************
+  delay(1500);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -196,56 +247,21 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, HIGH);
-  pwmWrite(left_enable, HIGH);
+  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 45000);   // decrese the value for a slower turn, increase it to go faster
+  
+  delay(100);
   
   digitalWrite(L_fwd, HIGH);
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn*******
+  delay(1500);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
 }
 
-void left()  // arced turn
-{
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
-  digitalWrite(R_bkw, LOW);
-  digitalWrite(L_bkw, LOW);
-  
-  pwmWrite(right_enable, HIGH);
-  pwmWrite(left_enable, 20000);  // may want to hault or move? (test)
-  
-  digitalWrite(R_fwd, HIGH);
-  digitalWrite(L_fwd, HIGH);
-
-  delay(1500);  // tune this value for complete turn
-
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
-}
-
-void right() // arced turn
-{
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
-  digitalWrite(R_bkw, LOW);
-  digitalWrite(L_bkw, LOW);
-  
-  pwmWrite(right_enable, 20000);  // may want to hault or move? (test)
-  pwmWrite(left_enable, HIGH);
-  
-  digitalWrite(R_fwd, HIGH);
-  digitalWrite(L_fwd, HIGH);
-
-  delay(1500);  // tune this value for complete turn
-
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
-}
 
 void spin()  // because, why not?
 {
@@ -260,7 +276,7 @@ void GoStraight()
 int currentVoltage;
 int voltageChange = 5;
 int D1 = pwmRead(L45sensor) - pwmRead(R45sensor);
-delay(20);
+delay(20);						//  delay MIGHT need to be longer
 int D2 = pwmRead(L45sensor) - pwmRead(R45sensor);
 
 if(D1 == D2)
