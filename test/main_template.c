@@ -186,9 +186,12 @@ void motor_test()  // motor testing function
   pwmWrite(right_enable, R_enable_val);
   pwmWrite(left_enable, L_enable_val);
   
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
   digitalWrite(R_fwd, HIGH);
   digitalWrite(L_fwd, HIGH);
-  
+  /*
   delay(1000);
   
   digitalWrite(R_fwd, LOW);
@@ -223,6 +226,7 @@ void motor_test()  // motor testing function
   
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
+  */
 }
 
 void turn_left() // point turn
