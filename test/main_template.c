@@ -190,7 +190,7 @@ void motor_test()  // motor testing function
   digitalWrite(L_bkw, LOW);
   
   digitalWrite(R_fwd, HIGH);
-  //digitalWrite(L_fwd, HIGH);
+  digitalWrite(L_fwd, LOW);
   /*
   delay(1000);
   
