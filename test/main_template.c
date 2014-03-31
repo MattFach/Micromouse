@@ -25,7 +25,7 @@ const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pi
 
 const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
 
-const int R_fwd = 13, R_bkw = 12, L_fwd = 7, L_bkw = 6;  // (verify)  motor direction pins
+const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
 
 int R_enable_val = 60000;  // initialize enable values high
 int L_enable_val = 60000;
