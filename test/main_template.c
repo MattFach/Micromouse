@@ -27,8 +27,8 @@ const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24; 
 
 const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
 
-int R_enable_val = 60000;  // initialize enable values high
-int L_enable_val = 60000;
+int R_enable_val = 55000;  // initialize enable values high
+int L_enable_val = 55000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -88,8 +88,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(right_enable, 60000);
-  pwmWrite(left_enable, 60000);
+  pwmWrite(right_enable, 55000);
+  pwmWrite(left_enable, 55000);
   //SerialUSB.println("hello world");
   
 }
@@ -238,8 +238,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 65000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 65000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 60000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 60000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -248,7 +248,7 @@ void turn_left() // point turn
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(400);  // tune this value for complete turn ************* ///////////////////
+  delay(300);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -261,8 +261,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 65000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 65000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 60000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 60000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -270,7 +270,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(400);  // tune this value for complete turn ******* ///////////////////
+  delay(300);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
