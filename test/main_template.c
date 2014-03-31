@@ -5,21 +5,21 @@
 // MATT!!  read the turn_left and turn_right functions to figure out what you need to tune
 // MATT!!  also read the loop to find values that need tuning
 
-const int L90sensor = 4;   //  James's pin declarations
-const int R90sensor = 3;
-const int L45sensor = 5;
+const int L90sensor = 3;   //  James's pin declarations
+const int R90sensor = 8;
+const int L45sensor = 4;
 const int R45sensor = 9;
-const int LeftMotor = 7;
+const int LeftMotor = 11;
 const int RightMotor = 10;
 
 
-const int sense_1 = 4, sense_2 = 5, sense_3 = 8, sense_4 = 9, sense_5 = 3;  // IR sensor pins
+const int sense_1 = 3, sense_2 = 4, sense_3 = 5, sense_4 = 9, sense_5 = 8;  // IR sensor pins
 
 const int L_encoder1 = 1, L_encoder2 = 14;   // left encoder pins
 
 const int R_encoder1 = 0, R_encoder2 = 31;  // right encoder pins
 
-const int right_enable = 10, left_enable = 7;        // motor enable pins
+const int right_enable = 10, left_enable = 11;        // motor enable pins
 
 const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pins
 
@@ -88,8 +88,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(R_enable, 50000);
-  pwmWrite(L_enable, 50000);
+  pwmWrite(right_enable, 50000);
+  pwmWrite(left_enable, 50000);
   //SerialUSB.println("hello world");
   
 }
@@ -99,6 +99,9 @@ void loop()
 {
   
 
+	motor_test();
+	/*
+	
 	int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
 				    // and right90 is pin 3
 				    // if this isn't true, change the pin declarations up top
@@ -147,7 +150,7 @@ void loop()
 		turn_left();
 		turn_left();
 	}
-
+*/
   
 	 /*
 	 // figure out how fast mouse can slow down 
