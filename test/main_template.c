@@ -281,7 +281,7 @@ void spin()  // because, why not?
 
 void GoStraight()
 {
-int currentVoltage;
+//int currentVoltage;
 int voltageChange = 5;
 int D1 = analogRead(L45sensor) - analogRead(R45sensor);
 delay(20);						//  delay MIGHT need to be longer
@@ -292,29 +292,37 @@ if(D1 == D2)
 else if(D1 < D2)
 {
 if(voltageChange < 0)
-ChangeLeft(voltageChange);
+{
+  ChangeLeft(&voltageChange);
+}
 else
-ChangeRight(voltageChange);
+{
+  ChangeRight(&voltageChange);
+}
 }
 else if(D1 > D2)
 {
 if(voltageChange < 0)
-ChangeRight(voltageChange);
+ChangeRight(&voltageChange);
 else
-ChangeLeft(voltageChange);
+{
+  ChangeLeft(&voltageChange);
+}
+}
 }
 
-void ChangeRight(int & change)
+void ChangeRight(int* change)
 {
 int currentVoltage = analogRead(RightMotor);
 if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
-change = -change;                                             //voltage wanted
-pwmWrite(RightMotor, currentVoltage*16 + change);
+*change = -(*change);                                             //voltage wanted
+pwmWrite(RightMotor, currentVoltage*16 + *change);
 }
-void ChangeLeft(int & change)
+
+void ChangeLeft(int* change)
 {
 int currentVoltage = analogRead(LeftMotor);
 if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
-change = -change;                                             //voltage wanted
-pwmWrite(LeftMotor, currentVoltage*16 + change);
+*change = -(*change);                                             //voltage wanted
+pwmWrite(LeftMotor, currentVoltage*16 + *change);
 }
