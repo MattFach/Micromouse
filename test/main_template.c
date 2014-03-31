@@ -248,7 +248,7 @@ void turn_left() // point turn
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(700);  // tune this value for complete turn ************* ///////////////////
+  delay(400);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -270,7 +270,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(700);  // tune this value for complete turn ******* ///////////////////
+  delay(400);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
