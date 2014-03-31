@@ -100,7 +100,7 @@ void loop()
   
 
 	turn_left();
-	turn_left();
+
 	delay(1500);
 	/*
 	
@@ -238,8 +238,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 50000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 50000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 65000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 65000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -248,7 +248,7 @@ void turn_left() // point turn
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn ************* ///////////////////
+  delay(700);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -261,8 +261,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 50000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 50000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 65000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 65000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -270,7 +270,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(1500);  // tune this value for complete turn ******* ///////////////////
+  delay(700);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
