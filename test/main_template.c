@@ -25,10 +25,10 @@ const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pi
 
 const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
 
-const int R_fwd = 13, R_bkw = 12, L_fwd = 6, L_bkw = 11;  // (verify)  motor direction pins
+const int R_fwd = 13, R_bkw = 12, L_fwd = 7, L_bkw = 6;  // (verify)  motor direction pins
 
-int R_enable_val = 50000;  // initialize enable values high
-int L_enable_val = 50000;
+int R_enable_val = 60000;  // initialize enable values high
+int L_enable_val = 60000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -88,8 +88,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(right_enable, 50000);
-  pwmWrite(left_enable, 50000);
+  pwmWrite(right_enable, 60000);
+  pwmWrite(left_enable, 60000);
   //SerialUSB.println("hello world");
   
 }
