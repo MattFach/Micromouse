@@ -101,7 +101,7 @@ void loop()
 
 	turn_left();
 
-	delay(1500);
+	delay(2000);
 	/*
 	
 	int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
