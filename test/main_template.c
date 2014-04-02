@@ -27,6 +27,8 @@ const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24; 
 
 const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
 
+const int Kp = .8, Kd = .2;
+
 int R_enable_val = 55000;  // initialize enable values high
 int L_enable_val = 55000;
 
@@ -127,7 +129,7 @@ Serial.println(sizeof(maze));
 		digitalWrite(R_fwd, HIGH);
   		digitalWrite(L_fwd, HIGH);
 		
-		GoStraight();
+		drive_straight();
 		
 		
 	}
@@ -334,4 +336,102 @@ int currentVoltage = analogRead(LeftMotor);
 if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
 *change = -(*change);                                             //voltage wanted
 pwmWrite(LeftMotor, currentVoltage*16 + *change);
+}
+
+void drive_straight() // use 4 sensors?
+{
+  // must convert voltages to distances and adjust code
+  
+  static int previous_error = 0; 
+  int error;  // error values
+  static int last_big = 0;
+  int biggest;
+  int total;
+  int time_now;
+  static int previous_time = 0;
+  bool good;
+  int left90, left45, right45, right90;
+  
+  if(previous_time)
+  {
+    time_now = millis();
+   }
+  else
+  {
+    previous_time = millis();
+    return;
+  }
+  
+  left90 = analogRead(sense_1);  // verify sensor orientation
+  right90 = analogRead(sense_5);
+  left45 = analogRead(sense_2);
+  right45 = analogRead(sense_3);
+    
+  
+  if(abs(right90 - left90) > 1000)
+  {
+    error = right90 - left90;
+    biggest = 0;
+    good = true;
+  }
+  
+  else if(abs(right45 - left45) > 500)
+  {
+    error = right45 - left45;
+    biggest = 0;
+    good = true;
+  }
+  
+  else
+ { 
+    
+   biggest = -left90; 
+   
+   if(right90 > abs(biggest))
+    {
+      biggest = right90;
+    }
+    
+    if(left45 > abs(biggest))
+    {
+      biggest = -left45;
+    }
+    
+    if(right45 > abs(biggest))
+    {
+      biggest = right45;
+    }
+    
+    if(last_big == 0)
+    {
+      last_big = biggest;
+      return;
+    }
+    
+    good = false;
+    
+  }
+  
+  if(good)
+  {
+    total = error * Kp + (error - previous_error) / (time_now - previous_time) * Kd;
+  }
+  
+  else
+  {
+    last_big = biggest;
+    total = (last_big - biggest) * Kp;
+  }
+
+  {
+    L_enable_val -= (total);
+      constrain(L_enable_val, 20000, 55000);  // may need to adjust
+    
+    R_enable_val += (total); 
+      constrain(R_enable_val, 20000, 55000);
+    
+    analogWrite(left_enable, L_enable_val);     // enable pins and values 
+                                                // must be global
+    analogWrite(right_enable, R_enable_val);    // different functions on maple
+  }
 }
