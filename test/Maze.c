@@ -15,6 +15,14 @@
 
 #define SIZE 6
 
+// Shortcut Constants
+#define MAPIJ this_maze->map[i][j]
+#define LEFT this_node->left
+#define RIGHT this_node->right
+#define UP this_node->up
+#define DOWN this_node->down
+
+
 //========================================================================
 //
 //  struct Node
@@ -29,33 +37,38 @@
 typedef struct Node { 
 
 	/* data */
-	int distance;
-	char section;
+	int floodval;
+
+	//int distance;
+	//char section;
 
 	int row;
 	int column;
-	int floodval;
 
 	bool traveled_to;
 	bool traced;
 
 	/* pointers to neighbors */
-	struct node * up;
-	struct node * down;
-	struct node * left;
-	struct node * right;
+	struct Node * left;
+	struct Node * right;
+	struct Node * up;
+	struct Node * down;
+	
 } Node;
+
+// Node Functions
+struct Node * new_Node ();
+bool update_floodval (Node * this_node);
+bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_wall, bool south_wall);
+
 
 typedef struct Maze {
 
-	Node map [SIZE][SIZE];	
-	/* 
-	struct Node map [SIZE][SIZE]; 
-	*/
+	Node * map [SIZE][SIZE];	
 
 } Maze;
 
-
+// Maze Functions
 struct Maze * new_Maze ();
 void init_map (Maze * this_maze);
 void print_map (Maze * this_maze);
@@ -94,6 +107,14 @@ void set_debug_off (void) {
     debug_on = FALSE;
 }
 
+// Constructors
+
+Node * new_Node () {
+
+	Node * this_Node = (Node *) malloc(sizeof(Node));
+
+	return this_Node;
+}
 
 Maze * new_Maze () {
 
@@ -106,34 +127,101 @@ Maze * new_Maze () {
 
 void init_map (Maze * this_maze) {
 
-	int i, j, reference;
+	int i, j;
 	int halfsize = SIZE / 2;
 
 	for (i = 0; i < SIZE; ++i) {
 		for (j = 0; j < SIZE; ++j) {
 
-			this_maze->map[i][j].traveled_to = false;
-			this_maze->map[i][j].traced = false;
-			this_maze->map[i][j].row = i;
-			this_maze->map[i][j].traveled_to = j;
+			// Allocate a new Node at this coordinate
+			MAPIJ = new_Node ();
+
+			// Initiaize the Node fields
+			MAPIJ->traveled_to = false;
+			MAPIJ->traced = false;
+			MAPIJ->row = i;
+			MAPIJ->traveled_to = j;
 
 
-			// Right now the initialization of flood value only works when SIZE is even
+			// Initializing the floodval at this coord
+			// NOTE : Right now this only works when SIZE is even
 			if (i < halfsize && j < halfsize)
-				this_maze->map[i][j].floodval = (halfsize - 1 - i) + (halfsize - 1 - j) ;
+				MAPIJ->floodval = (halfsize - 1 - i) + (halfsize - 1 - j) ;
 
 			else if (i < halfsize && j >= halfsize)
-				this_maze->map[i][j].floodval = (halfsize - 1 - i) + (j - halfsize) ;
+				MAPIJ->floodval = (halfsize - 1 - i) + (j - halfsize) ;
 			
 			else if (i >= halfsize && j < halfsize)
-				this_maze->map[i][j].floodval = (i - halfsize) + (halfsize - 1 - j) ;
+				MAPIJ->floodval = (i - halfsize) + (halfsize - 1 - j) ;
 
 			else
-				this_maze->map[i][j].floodval = (i - halfsize) + (j - halfsize) ;
+				MAPIJ->floodval = (i - halfsize) + (j - halfsize) ;
+
+
+			// Initializing the pointers to neighboring Nodes
+			// By Default, all of the neighbors will be accessible 
+			// i.e. no inner walls
+			MAPIJ->left = (i == 0) ? NULL : (this_maze->map[i-1][j]);
+			MAPIJ->right = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
+			MAPIJ->up = (j == 0) ? NULL : (this_maze->map[i][j-1]);
+			MAPIJ->down = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
 
 		}
 	}
 }
+
+// Node Functions
+
+bool update_floodval (Node * this_node) {
+
+	// The Node's floodval will be 1 higher than the neigboring cell
+	int smallestneighbor = -1;
+
+	// NOTE: LEFT, RIGHT, etc, are substituting:
+	// this_node->left, this_node->right, etc.
+
+	if (LEFT != NULL && LEFT->floodval > smallestneighbor)
+		smallestneighbor = LEFT->floodval;
+
+	if (RIGHT != NULL && RIGHT->floodval > smallestneighbor)
+		smallestneighbor = RIGHT->floodval;	
+
+	if (UP != NULL && UP->floodval > smallestneighbor)
+		smallestneighbor = UP->floodval;
+
+	if (DOWN != NULL && DOWN->floodval > smallestneighbor)
+		smallestneighbor = DOWN->floodval;
+	
+	this_node->floodval = smallestneighbor + 1;
+
+	return true;
+
+}
+
+bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_wall, bool south_wall) {
+
+	// if any of the boolean flags are on, it means that there is a wall in that direction.
+	// therefore the pointer to the neighbor should be NULLed
+
+	// NOTE: LEFT, RIGHT, etc, are substituting:
+	// this_node->left, this_node->right, etc.
+
+	if (west_wall)
+		LEFT = NULL;
+
+	if (east_wall)
+		RIGHT = NULL;
+
+	if (north_wall)
+		UP = NULL;
+
+	if (south_wall)
+		DOWN = NULL;
+
+	return true;
+}
+
+// Maze Functions
 
 void print_map (Maze * this_maze) {
 
@@ -146,15 +234,18 @@ void print_map (Maze * this_maze) {
 		for (j = 0; j < SIZE; ++j) {
 
 
-			printf("%c%2d", ' ', this_maze->map[i][j].floodval);
+			printf("%s%2d", "  ", MAPIJ->floodval);
 
 		} 
-		printf("\n");
+		printf("\n\n");
 	}
 
 	printf("\n");
-
 }
+
+
+
+// Main
 
 int main () {
 
