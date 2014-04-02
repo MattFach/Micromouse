@@ -42,15 +42,16 @@ typedef struct node
   short int column;
 
   bool traveled_to;
-  bool traced;
+
+  bool up;
+  bool down;
+  bool left;
+  bool right;
   
-  struct node* up;
-  struct node* down;
-  struct node* left;
-  struct node* right;
+  struct node* linked_to;
   };
 
-  //struct node maze[16][16];
+  struct node maze[16][16];
 
 
 void setup()
@@ -98,10 +99,12 @@ void setup()
 void loop()
 {
   
+Serial.print(sizeof(struct node));
+Serial.print("    ");
+Serial.println(sizeof(maze));
+//	turn_left();
 
-	turn_left();
-
-	delay(2000);
+//	delay(2000);
 	/*
 	
 	int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
