@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "mylib.h"
+//#include "mylib.h"
 
 
 // Constants
@@ -298,13 +298,20 @@ void print_map (const Maze * this_maze) {
 
 int main () {
 
-/* This stuff below is for testing Maze code */
+/*  This stuff below Does not do anything yet... all it does is print values
+
+	READ HERE
+
+	I will probably take out main altogether from this file
+	and then have a separate solver.c for testing the Maze.c code */
+
+
 
 	Maze * my_Maze = new_Maze();
-	int horiz_wall, vert_wall;
 	
 	print_map(my_Maze);
 
+	// I ALSO NEED A MAZE DESTRUCTOR METHOD
 
 //	newline(stdout);	
 //	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
