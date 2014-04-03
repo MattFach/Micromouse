@@ -163,35 +163,7 @@ Node * getNodeFromNum (Maze * this_maze, int popped_num) {
 	return MAPIJ;
 }
 
-void flood_fill (Maze * this_maze, Node * this_node) {
-
-	Stack * main_Stack = 0;
-	Node * working_Node = 0;
-	long status;
-	int pushed_num;
-	int popped_num;
-	// Allocate and initialize Stack
-	unsigned long amount = SIZE * SIZE;
-	main_Stack = new_Stack(amount);
-
-	// Push cell (linearnum) to Stack
-	pushed_num = getLinearNum(this_node);
-	status = push (main_Stack, pushed_num);
-
-	while (!isempty_Stack (main_Stack)) {
-
-		status = pop (main_Stack, &popped_num);
-		working_Node = getNodeFromNum (this_maze, popped_num);
-
-	}
-		
-
-	delete_Stack (&main_Stack);
-
-}
-
-
-bool update_floodval (Node * this_node) {
+int getSmallestNeighbor (Node * this_node) {
 
 	// The Node's floodval will be 1 higher than the neigboring cell
 	int smallestneighbor = -1;
@@ -210,12 +182,107 @@ bool update_floodval (Node * this_node) {
 
 	if (DOWN != NULL && DOWN->floodval > smallestneighbor)
 		smallestneighbor = DOWN->floodval;
-	
-	this_node->floodval = smallestneighbor + 1;
+
+	return smallestneighbor;
+}
+
+long floodValCheck(Node * this_node) {
+
+	if (getSmallestNeighbor (this_node) + 1 == this_node->floodval)
+		// return true indicating this Node is 1 + min to adj cell.
+		return TRUE;
+
+	else 
+		return FALSE;
+}
+
+bool update_floodval (Node * this_node) {
+
+	this_node->floodval = getSmallestNeighbor (this_node) + 1;
 
 	return true;
 
 }
+
+void push_neighbors (Stack * main_Stack, Node * this_node) {
+
+	int pushed_num;
+
+	if (LEFT != NULL) {
+
+		pushed_num = getLinearNum(LEFT);
+		push (main_Stack, pushed_num);
+	}
+
+	if (RIGHT != NULL) {
+
+		pushed_num = getLinearNum(RIGHT);
+		push (main_Stack, pushed_num);
+	}
+
+	if (UP != NULL) {
+
+		pushed_num = getLinearNum(UP);
+		push (main_Stack, pushed_num);
+	}
+
+	if (DOWN != NULL) {
+
+		pushed_num = getLinearNum(DOWN);
+		push (main_Stack, pushed_num);
+	}
+
+}
+
+
+void flood_fill (Maze * this_maze, Node * this_node) {
+
+	Stack * main_Stack = 0;
+	Node * working_Node = 0;
+	long status;
+	int pushed_num;
+	//int popped_num;
+	long popped_num;
+	// Allocate and initialize Stack
+	unsigned long amount = SIZE * SIZE;
+	main_Stack = new_Stack(amount);
+
+	// Push cell (linearnum) to Stack
+	pushed_num = getLinearNum(this_node);
+	status = push (main_Stack, pushed_num);
+
+	// While Stack is not empty
+	while (!isempty_Stack (main_Stack)) {
+
+		// Pop cell from Stack
+		status = pop (main_Stack, &popped_num);
+		working_Node = getNodeFromNum (this_maze, popped_num);
+	
+		// is the cell (1 + minumum OPEN adjascent cell) ?
+		status = floodValCheck(working_Node);
+
+		// if YES, keep going until stack empty
+		if (status)
+			continue;
+		
+		// if no, change current cell to 1 + minimum adjascent open cell
+		// Then push open neighbors to the stack.
+		else {
+
+			update_floodval (working_Node);
+			push_neighbors (main_Stack, working_Node);	// Push adj open neighbors to stack
+
+		}
+
+	} // end while
+		
+	// deallocate Stack
+	delete_Stack (&main_Stack);
+
+}
+
+
+
 
 bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_wall, bool south_wall) {
 
