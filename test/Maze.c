@@ -58,8 +58,8 @@ typedef struct Node {
 	int row;
 	int column;
 
-	bool traveled_to;
-	bool traced;
+	int traveled_to;
+	int traced;
 
 	/* pointers to neighbors */
 	struct Node * left;
@@ -103,8 +103,8 @@ Node * new_Node (Maze * this_maze, int i, int j) {
 
 	int halfsize = this_maze->size / 2;
 
-	this_node->traveled_to = false;
-	this_node->traced = false;
+	this_node->traveled_to = FALSE;
+	this_node->traced = FALSE;
 	this_node->row = i;
 	this_node->column = j;
 
@@ -229,6 +229,9 @@ void flood_fill (Node * this_node) {
 	
 }
 
+// We really do not need to pass Maze * this_maze, 
+// but it is done here for the set_off option
+// where set_off being 0 will "erase" the wall... which is here for now.
 void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on) {
 
 	switch (dir) {
@@ -254,11 +257,17 @@ void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on) {
 	}
 }
 
-//void update_node (Node * this_node){
+// Visit cell = Updates a node
+void visit_node (Maze * this_maze, Node * this_node){
 
+	this_node->traveled_to = TRUE;
 
+	// Use sensors to obtain wall information...
+	// Call(s) to set_wall(this_maze, this_node, ...) to update wall info
 
-//}
+	flood_fill (this_node);
+
+}
 
 
 // Maze Functions
