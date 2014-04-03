@@ -18,6 +18,7 @@
 
 #define SIZE 6
 
+
 // Directions
 #define NORTH 0
 #define EAST 1
@@ -243,6 +244,7 @@ void flood_fill (Maze * this_maze, Node * this_node) {
 	int pushed_num;
 	//int popped_num;
 	long popped_num;
+
 	// Allocate and initialize Stack
 	unsigned long amount = SIZE * SIZE;
 	main_Stack = new_Stack(amount);
@@ -336,10 +338,25 @@ void print_map (Maze * this_maze) {
 
 int main () {
 
-	Maze * my_Maze = new_Maze();
+/* This stuff below is for testing Maze code */
 
+	Maze * my_Maze = new_Maze();
+	int horiz_wall, vert_wall;
 	print_map(my_Maze);
 
+	newline(stdout);	
+	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
+    horiz_wall = decin();   /* Read in from user input */
+    clrbuf(horiz_wall);     /* get rid of extra input */
+    newline(stdout);	
+	writeline ("Please enter Vert. wall #: ", stdout); /* prompt user input */
+    vert_wall = decin();   /* Read in from user input */
+    clrbuf(vert_wall);     /* get rid of extra input */
+	newline(stdout);	
+
+	
+
+	newline(stdout);	
 	return 1;
 }
 
