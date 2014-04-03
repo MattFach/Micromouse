@@ -1,12 +1,9 @@
 
-Mazenew: Mazenew.o stack.o mylib.o 
-	gcc -o Mazenew -g Mazenew.o stack.o mylib.o
+Maze: Maze.o mylib.o 
+	gcc -o Maze -g Maze.o mylib.o
 
-Mazenew.o: Mazenew.c stack.c mylib.c
-	gcc -Wall -pedantic -c -g Mazenew.c
-
-stack.o: stack.c stack.h
-	gcc -Wall -pedantic -c -g stack.c
+Maze.o: Maze.c mylib.c
+	gcc -Wall -pedantic -c -g Maze.c
 
 mylib.o: mylib.c mylib.h
 	gcc -Wall -pedantic -c -g mylib.c

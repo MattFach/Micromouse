@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "mylib.h"
 
 
 // Constants
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -15,6 +17,7 @@
 
 #define SIZE 6
 
+
 // Directions
 #define NORTH 0
 #define EAST 1
@@ -23,11 +26,13 @@
 
 // Shortcut Constants
 #define MAPIJ this_maze->map[i][j]
+#define FLOODVAL this_node->floodval
+#define ROW this_node->row
+#define COL this_node->column
 #define LEFT this_node->left
 #define RIGHT this_node->right
 #define UP this_node->up
 #define DOWN this_node->down
-
 
 
 //========================================================================
@@ -41,6 +46,7 @@
 //  Node Functions
 //
 //========================================================================
+
 typedef struct Node { 
 
 	/* data */
@@ -63,123 +69,92 @@ typedef struct Node {
 	
 } Node;
 
-// Node Functions
-struct Node * new_Node ();
-bool update_floodval (Node * this_node);
-bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_wall, bool south_wall);
-
-
 typedef struct Maze {
 
 	Node * map [SIZE][SIZE];	
+	int size;
 
 } Maze;
 
+
+// Node Functions
+struct Node * new_Node ();
+void flood_fill (Node * this_node);
+void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on);
+
+// Floodfill Helper Functions
+int get_smallest_neighbor (Node * this_node);
+int floodval_check(Node * this_node) ;
+void update_floodval (Node * this_node);
+void recurse_neighbors (Node * this_node) ;
+
+
 // Maze Functions
 struct Maze * new_Maze ();
-void init_map (Maze * this_maze);
-void print_map (Maze * this_maze);
+void print_map (const Maze * this_maze);
 
 
-static bool debug_on = FALSE;	/* debug messages flag */
-static long maze_counter = 0;	/* number of lists allocated so far */
-
-/* Debug Mode - Setting Functions */
-
-/*-----------------------------------------------------------------------
-Function Name:      set_debug_on
-Purpose:            To enable Debug Mode
-Description:        Sets the class variable debug_on to TRUE
-Input:              None
-Result:             Debug messages will be displayed while running
-                    the driver programs. No return value.
------------------------------------------------------------------------*/
-void set_debug_on (void) {
-    
-    /* debug mode will be turned on */
-    debug_on = TRUE;
-}
-
-/*-----------------------------------------------------------------------
-Function Name:      set_debug_of
-Purpose:            To disable Debug Mode
-Description:        Sets the class variable debug_on to FALSE
-Input:              None
-Result:             Debug messages will not be displayed while running
-                    the driver programs. No return value.
------------------------------------------------------------------------*/
-void set_debug_off (void) {
-
-    /* debug mode will be turned off */
-    debug_on = FALSE;
-}
 
 // Constructors
 
-Node * new_Node () {
+Node * new_Node (Maze * this_maze, int i, int j) {
 
-	Node * this_Node = (Node *) malloc(sizeof(Node));
+	Node * this_node = (Node *) malloc(sizeof(Node));
 
-	return this_Node;
+	int halfsize = this_maze->size / 2;
+
+	this_node->traveled_to = false;
+	this_node->traced = false;
+	this_node->row = i;
+	this_node->column = j;
+
+	// Initializing the floodval at this coord
+	// NOTE : Right now this only works when SIZE is even
+	if (i < halfsize && j < halfsize)
+		FLOODVAL = (halfsize - 1 - i) + (halfsize - 1 - j) ;
+			
+	else if (i < halfsize && j >= halfsize)
+		FLOODVAL = (halfsize - 1 - i) + (j - halfsize) ;
+			
+	else if (i >= halfsize && j < halfsize)
+		FLOODVAL = (i - halfsize) + (halfsize - 1 - j) ;
+
+	else
+		FLOODVAL = (i - halfsize) + (j - halfsize) ;
+
+
+	// Initializing the pointers to neighboring Nodes
+	// By Default, all of the neighbors will be accessible 
+	// i.e. no inner walls. outer walls are implied and constructed
+	LEFT = (i == 0) ? NULL : (this_maze->map[i-1][j]);
+	RIGHT = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
+	UP = (j == 0) ? NULL : (this_maze->map[i][j-1]);
+	DOWN = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
+
+	return this_node;
 }
 
 Maze * new_Maze () {
 
 	Maze * this_maze = (Maze *) malloc(sizeof(Maze));
 
-	init_map(this_maze);
+	int i, j;
+
+	this_maze->size = SIZE;
+
+	for (i = 0; i < SIZE; ++i) 
+		for (j = 0; j < SIZE; ++j) 
+			// Allocate a new Node at this coordinate
+			MAPIJ = new_Node (this_maze, i, j);
 
 	return this_maze;
 }
 
-void init_map (Maze * this_maze) {
-
-	int i, j;
-	int halfsize = SIZE / 2;
-
-	for (i = 0; i < SIZE; ++i) {
-		for (j = 0; j < SIZE; ++j) {
-
-			// Allocate a new Node at this coordinate
-			MAPIJ = new_Node ();
-
-			// Initiaize the Node fields
-			MAPIJ->traveled_to = false;
-			MAPIJ->traced = false;
-			MAPIJ->row = i;
-			MAPIJ->traveled_to = j;
-
-
-			// Initializing the floodval at this coord
-			// NOTE : Right now this only works when SIZE is even
-			if (i < halfsize && j < halfsize)
-				MAPIJ->floodval = (halfsize - 1 - i) + (halfsize - 1 - j) ;
-
-			else if (i < halfsize && j >= halfsize)
-				MAPIJ->floodval = (halfsize - 1 - i) + (j - halfsize) ;
-			
-			else if (i >= halfsize && j < halfsize)
-				MAPIJ->floodval = (i - halfsize) + (halfsize - 1 - j) ;
-
-			else
-				MAPIJ->floodval = (i - halfsize) + (j - halfsize) ;
-
-
-			// Initializing the pointers to neighboring Nodes
-			// By Default, all of the neighbors will be accessible 
-			// i.e. no inner walls
-			MAPIJ->left = (i == 0) ? NULL : (this_maze->map[i-1][j]);
-			MAPIJ->right = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
-			MAPIJ->up = (j == 0) ? NULL : (this_maze->map[i][j-1]);
-			MAPIJ->down = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
-
-		}
-	}
-}
 
 // Node Functions
 
-bool update_floodval (Node * this_node) {
+
+int get_smallest_neighbor (Node * this_node) {
 
 	// The Node's floodval will be 1 higher than the neigboring cell
 	int smallestneighbor = -1;
@@ -198,43 +173,100 @@ bool update_floodval (Node * this_node) {
 
 	if (DOWN != NULL && DOWN->floodval > smallestneighbor)
 		smallestneighbor = DOWN->floodval;
+
+	return smallestneighbor;
+}
+
+int floodval_check(Node * this_node) {
+
+	if (get_smallest_neighbor (this_node) + 1 == this_node->floodval)
+		// return true indicating this Node is 1 + min to adj cell.
+		return TRUE;
+
+	else 
+		return FALSE;
+}
+
+void update_floodval (Node * this_node) {
+
+	this_node->floodval = get_smallest_neighbor (this_node) + 1;
+
+}
+
+void recurse_neighbors (Node * this_node) {
+
+	// A NULL neighbor represents a wall
+	// If neighbor is accessible, call floodfill w/neighbor @ param
+
+	if (LEFT != NULL) 
+		flood_fill (LEFT);
+
+	if (RIGHT != NULL) 
+		flood_fill (RIGHT);
+
+	if (UP != NULL) 
+		flood_fill (UP);
+
+	if (DOWN != NULL) 
+		flood_fill (DOWN);
+
+}
+
+void flood_fill (Node * this_node) {
+
+	int status;  // Flag for valid floodval
 	
-	this_node->floodval = smallestneighbor + 1;
+	// is the cell (1 + minumum OPEN adjascent cell) ?
+	status = floodval_check (this_node);
 
-	return true;
+	// if no, change current cell to 1 + minimum adjascent open cell
+	// Then push open neighbors to the recursive stack.
+	if (!status) {
 
+		update_floodval (this_node); // Update floodval to 1 + min open neighbor
+		recurse_neighbors(this_node); // Recursive call to neighbors
+	}
+	
 }
 
-bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_wall, bool south_wall) {
+void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on) {
 
-	// if any of the boolean flags are on, it means that there is a wall in that direction.
-	// therefore the pointer to the neighbor should be NULLed
+	switch (dir) {
+		case EAST : 
+			if (ROW != SIZE - 1)
+				LEFT = (set_on) ? NULL : this_maze->map[ROW+1][COL];
+			break;
 
-	// NOTE: LEFT, RIGHT, etc, are substituting:
-	// this_node->left, this_node->right, etc.
+		case WEST :
+			if (ROW != 0) 
+				RIGHT = (set_on) ? NULL : this_maze->map[ROW-1][COL];
+			break;
 
-	if (west_wall)
-		LEFT = NULL;
+		case NORTH :
+			if (COL != 0)
+				UP = (set_on) ? NULL : this_maze->map[ROW][COL-1];	
+			break;
 
-	if (east_wall)
-		RIGHT = NULL;
-
-	if (north_wall)
-		UP = NULL;
-
-	if (south_wall)
-		DOWN = NULL;
-
-	return true;
+		case SOUTH :
+			if (COL != SIZE -1)
+				DOWN = (set_on) ? NULL : this_maze->map[ROW][COL+1];
+			break; 
+	}
 }
+
+//void update_node (Node * this_node){
+
+
+
+//}
 
 
 // Maze Functions
 
-void print_map (Maze * this_maze) {
+void print_map (const Maze * this_maze) {
 
 	int i, j;
-	char wallsym;
+	//char wallsym;
 
 	printf("\n%s\n\n", "CURRENT MAP VALUES: ");
 
@@ -257,10 +289,26 @@ void print_map (Maze * this_maze) {
 
 int main () {
 
-	Maze * my_Maze = new_Maze();
+/* This stuff below is for testing Maze code */
 
+	Maze * my_Maze = new_Maze();
+	int horiz_wall, vert_wall;
+	
 	print_map(my_Maze);
 
+
+//	newline(stdout);	
+//	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
+//    horiz_wall = decin();   /* Read in from user input */
+//    clrbuf(horiz_wall);     /* get rid of extra input */
+//    newline(stdout);	
+//	writeline ("Please enter Vert. wall #: ", stdout); /* prompt user input */
+//    vert_wall = decin();   /* Read in from user input */
+//    clrbuf(vert_wall);     /* get rid of extra input */
+//	newline(stdout);	
+
+
+//	newline(stdout);	
 	return 1;
 }
 

@@ -14,3 +14,7 @@ test/Mazenew.dSYM/Contents/Info.plist
 test/Mazenew.dSYM/Contents/Resources/DWARF/Mazenew
 
 *.o
+
+test/Mazenew.c
+
+test/Mazenew.c
