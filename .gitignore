@@ -1,2 +1,16 @@
 
 test/MicroMouse-r194.jar
+
+test/stack.c
+
+test/stack.h
+
+test/mylib.c
+
+test/mylib.h
+
+test/Mazenew.dSYM/Contents/Info.plist
+
+test/Mazenew.dSYM/Contents/Resources/DWARF/Mazenew
+
+*.o

@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "mylib.h"
+#include "stack.h"
 
 
 // Constants
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -81,39 +84,6 @@ void init_map (Maze * this_maze);
 void print_map (Maze * this_maze);
 
 
-static bool debug_on = FALSE;	/* debug messages flag */
-static long maze_counter = 0;	/* number of lists allocated so far */
-
-/* Debug Mode - Setting Functions */
-
-/*-----------------------------------------------------------------------
-Function Name:      set_debug_on
-Purpose:            To enable Debug Mode
-Description:        Sets the class variable debug_on to TRUE
-Input:              None
-Result:             Debug messages will be displayed while running
-                    the driver programs. No return value.
------------------------------------------------------------------------*/
-void set_debug_on (void) {
-    
-    /* debug mode will be turned on */
-    debug_on = TRUE;
-}
-
-/*-----------------------------------------------------------------------
-Function Name:      set_debug_of
-Purpose:            To disable Debug Mode
-Description:        Sets the class variable debug_on to FALSE
-Input:              None
-Result:             Debug messages will not be displayed while running
-                    the driver programs. No return value.
------------------------------------------------------------------------*/
-void set_debug_off (void) {
-
-    /* debug mode will be turned off */
-    debug_on = FALSE;
-}
-
 // Constructors
 
 Node * new_Node () {
@@ -179,6 +149,48 @@ void init_map (Maze * this_maze) {
 
 // Node Functions
 
+
+int getLinearNum (Node * this_node) {
+
+	return 16 * (this_node->row) + (this_node->column);
+}
+
+Node * getNodeFromNum (Maze * this_maze, int popped_num) {
+
+	int i = popped_num / SIZE;
+	int j = popped_num % SIZE;
+
+	return MAPIJ;
+}
+
+void flood_fill (Maze * this_maze, Node * this_node) {
+
+	Stack * main_Stack = 0;
+	Node * working_Node = 0;
+	long status;
+	int pushed_num;
+	int popped_num;
+	// Allocate and initialize Stack
+	unsigned long amount = SIZE * SIZE;
+	main_Stack = new_Stack(amount);
+
+	// Push cell (linearnum) to Stack
+	pushed_num = getLinearNum(this_node);
+	status = push (main_Stack, pushed_num);
+
+	while (!isempty_Stack (main_Stack)) {
+
+		status = pop (main_Stack, &popped_num);
+		working_Node = getNodeFromNum (this_maze, popped_num);
+
+	}
+		
+
+	delete_Stack (&main_Stack);
+
+}
+
+
 bool update_floodval (Node * this_node) {
 
 	// The Node's floodval will be 1 higher than the neigboring cell
@@ -234,7 +246,7 @@ bool update_walls (Node * this_node, bool west_wall, bool east_wall, bool north_
 void print_map (Maze * this_maze) {
 
 	int i, j;
-	char wallsym;
+	//char wallsym;
 
 	printf("\n%s\n\n", "CURRENT MAP VALUES: ");
 
