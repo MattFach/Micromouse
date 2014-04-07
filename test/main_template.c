@@ -101,9 +101,9 @@ void setup()
 void loop()
 {
   
-Serial.print(sizeof(struct node));
-Serial.print("    ");
-Serial.println(sizeof(maze));
+SerialUSB.print(sizeof(struct node));
+SerialUSB.print("    ");
+SerialUSB.println(sizeof(maze));
 
 motor_test();
 //	turn_left();
