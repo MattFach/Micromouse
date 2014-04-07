@@ -104,6 +104,8 @@ void loop()
 Serial.print(sizeof(struct node));
 Serial.print("    ");
 Serial.println(sizeof(maze));
+
+motor_test();
 //	turn_left();
 
 //	delay(2000);
