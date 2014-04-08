@@ -91,8 +91,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(right_enable, 55000);
-  pwmWrite(left_enable, 55000);
+  pwmWrite(right_enable, 30000);
+  pwmWrite(left_enable, 30000);
   //SerialUSB.println("hello world");
   
 }
@@ -245,8 +245,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 60000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 60000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 30000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 30000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -268,8 +268,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 60000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 60000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 30000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 30000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -426,11 +426,11 @@ void drive_straight() // use 4 sensors?
   }
 
   {
-    L_enable_val -= (total);
-      constrain(L_enable_val, 20000, 55000);  // may need to adjust
+    L_enable_val -= (8*total);
+      constrain(L_enable_val, 1000, 30000);  // may need to adjust
     
-    R_enable_val += (total); 
-      constrain(R_enable_val, 20000, 55000);
+    R_enable_val += (8*total); 
+      constrain(R_enable_val, 1000, 30000);
     
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
