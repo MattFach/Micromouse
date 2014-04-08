@@ -29,8 +29,8 @@ const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor dire
 
 const int Kp = .8, Kd = .2;
 
-int R_enable_val = 35000;  // initialize enable values high
-int L_enable_val = 35000;
+int R_enable_val = 45000;  // initialize enable values high
+int L_enable_val = 45000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -91,8 +91,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(right_enable, 35000);
-  pwmWrite(left_enable, 35000);
+  pwmWrite(right_enable, 45000);
+  pwmWrite(left_enable, 45000);
   //SerialUSB.println("hello world");
   
 }
@@ -246,8 +246,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 35000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 35000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 45000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -269,8 +269,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 35000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 35000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 45000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 45000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -428,10 +428,10 @@ void drive_straight() // use 4 sensors?
 
   {
     L_enable_val -= (8*total);
-      constrain(L_enable_val, 2000, 35000);  // may need to adjust
+      constrain(L_enable_val, 20000, 45000);  // may need to adjust
     
     R_enable_val += (8*total); 
-      constrain(R_enable_val, 2000, 35000);
+      constrain(R_enable_val, 20000, 45000);
     
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
