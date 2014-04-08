@@ -29,8 +29,8 @@ const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor dire
 
 const int Kp = .8, Kd = .2;
 
-int R_enable_val = 55000;  // initialize enable values high
-int L_enable_val = 55000;
+int R_enable_val = 40000;  // initialize enable values high
+int L_enable_val = 40000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
