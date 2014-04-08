@@ -371,7 +371,10 @@ void drive_straight() // use 4 sensors?
   left45 = analogRead(sense_2);
   right45 = analogRead(sense_3);
     
+  error = right90 - left90;
+  good = true;
   
+  /*
   if(abs(right90 - left90) > 1000)
   {
     error = right90 - left90;
@@ -415,7 +418,7 @@ void drive_straight() // use 4 sensors?
     good = false;
     
   }
-  
+  */
   if(good)
   {
     total = error * Kp + (error - previous_error) / (time_now - previous_time) * Kd;
