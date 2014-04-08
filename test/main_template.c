@@ -27,7 +27,7 @@ const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24; 
 
 const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
 
-const int Kp = 1, Kd = 0;
+const int Kp = .85, Kd = 0;
 
 int R_enable_val = 33000;  // initialize enable values high
 int L_enable_val = 33000;
