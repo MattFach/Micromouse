@@ -2,101 +2,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "Maze.h"
+
+static int debug_on = FALSE;    /* debug flag */
+
+// Debug Statement Functions
+
+void set_debug_on () {
+    
+    /* Debug Statements turned on */
+    debug_on = TRUE;
+}
 
 
-// Constants
+void set_debug_off () {
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#define SIZE 6
-
-
-// Directions
-#define NORTH 0
-#define EAST 1
-#define SOUTH 2
-#define WEST 3
-
-// Shortcut Constants
-#define MAPIJ this_maze->map[i][j]
-#define FLOODVAL this_node->floodval
-#define ROW this_node->row
-#define COL this_node->column
-#define LEFT this_node->left
-#define RIGHT this_node->right
-#define UP this_node->up
-#define DOWN this_node->down
-
-
-//========================================================================
-//
-//  struct Node
-//
-//  Description: 
-//
-//  Data fields
-//
-//  Node Functions
-//
-//========================================================================
-
-typedef struct Node { 
-
-	/* data */
-	int floodval;
-
-	//int distance;
-	//char section;
-
-	int row;
-	int column;
-
-	int traveled_to;
-	int traced;
-
-	/* pointers to neighbors */
-	struct Node * left;
-	struct Node * right;
-	struct Node * up;
-	struct Node * down;
-	
-} Node;
-
-typedef struct Maze {
-
-	Node * map [SIZE][SIZE];	
-	int size;
-
-} Maze;
-
-
-// Node Functions
-struct Node * new_Node ();
-void flood_fill (Node * this_node);
-void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on);
-
-// Floodfill Helper Functions
-int get_smallest_neighbor (Node * this_node);
-int floodval_check(Node * this_node) ;
-void update_floodval (Node * this_node);
-void recurse_neighbors (Node * this_node) ;
-
-
-// Maze Functions
-struct Maze * new_Maze ();
-void print_map (const Maze * this_maze);
-
+    /* Debug Statements turned off */
+    debug_on = FALSE;
+}
 
 
 // Constructors
 
 Node * new_Node (Maze * this_maze, int i, int j) {
+
+	if (debug_on)
+		printf("allocating %d, %d\n", i, j);
 
 	Node * this_node = (Node *) malloc(sizeof(Node));
 
@@ -155,6 +86,9 @@ Maze * new_Maze () {
 // Destructors
 void delete_Node (Node ** npp) {
 
+	if (debug_on) 
+		printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
+
 	free (*npp);
 	*npp = 0;
 }
@@ -165,7 +99,8 @@ void delete_Maze (Maze ** mpp) {
 	int i, j;
 
 	for (i = 0; i < (*mpp)->size; i++) {
-		for (j = 0; j < (*mpp)->size; i++) {
+
+		for (j = 0; j < (*mpp)->size; j++) {
 			delete_Node (&((*mpp)->map[i][j])); 
 		}
 	}
@@ -306,7 +241,6 @@ void print_map (const Maze * this_maze) {
 	for (i = 0; i < SIZE; ++i) {
 		for (j = 0; j < SIZE; ++j) {
 
-
 			printf("%s%2d", "  ", MAPIJ->floodval);
 
 		} 
@@ -329,7 +263,7 @@ int main () {
 	I will probably take out main altogether from this file
 	and then have a separate solver.c for testing the Maze.c code */
 
-
+	//set_debug_on();
 
 	Maze * my_Maze = new_Maze();
 	
