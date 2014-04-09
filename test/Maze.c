@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-//#include "mylib.h"
 
 
 // Constants
@@ -134,6 +133,8 @@ Node * new_Node (Maze * this_maze, int i, int j) {
 	return this_node;
 }
 
+
+
 Maze * new_Maze () {
 
 	Maze * this_maze = (Maze *) malloc(sizeof(Maze));
@@ -148,6 +149,29 @@ Maze * new_Maze () {
 			MAPIJ = new_Node (this_maze, i, j);
 
 	return this_maze;
+}
+
+
+// Destructors
+void delete_Node (Node ** npp) {
+
+	free (*npp);
+	*npp = 0;
+}
+
+
+void delete_Maze (Maze ** mpp) {
+
+	int i, j;
+
+	for (i = 0; i < (*mpp)->size; i++) {
+		for (j = 0; j < (*mpp)->size; i++) {
+			delete_Node (&((*mpp)->map[i][j])); 
+		}
+	}
+
+	free(*mpp);
+	*mpp = 0;
 }
 
 
@@ -311,7 +335,7 @@ int main () {
 	
 	print_map(my_Maze);
 
-	// I ALSO NEED A MAZE DESTRUCTOR METHOD
+	delete_Maze(&my_Maze);
 
 //	newline(stdout);	
 //	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
