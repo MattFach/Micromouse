@@ -254,9 +254,9 @@ void print_map (const Maze * this_maze) {
 
 // Main
 
-int main () {
+//int main () {
 
-/*  This stuff below Does not do anything yet... all it does is print values
+  /*  This stuff below Does not do anything yet... all it does is print values
 
 	READ HERE
 
@@ -264,13 +264,13 @@ int main () {
 	and then have a separate solver.c for testing the Maze.c code */
 
 	//set_debug_on();
-
+/*
 	Maze * my_Maze = new_Maze();
 	
 	print_map(my_Maze);
 
 	delete_Maze(&my_Maze);
-
+*/
 //	newline(stdout);	
 //	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
 //    horiz_wall = decin();   /* Read in from user input */
@@ -283,7 +283,5 @@ int main () {
 
 
 //	newline(stdout);	
-	return 1;
-}
-
-
+//	return 1;
+//}
