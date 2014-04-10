@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include "Maze.h"
 
 static int debug_on = FALSE;    /* debug flag */
