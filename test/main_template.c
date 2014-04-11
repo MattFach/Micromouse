@@ -91,8 +91,8 @@ void setup()
   pinMode(L_bkw, OUTPUT);
   
  
-  pwmWrite(right_enable, 33000);
-  pwmWrite(left_enable, 33000);
+  pwmWrite(right_enable, R_enable_val);
+  pwmWrite(left_enable, L_enable_val);
   //SerialUSB.println("hello world");
   
 }
@@ -247,8 +247,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 33000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 33000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 30000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 30000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -270,8 +270,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 33000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 33000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 30000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 30000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -432,10 +432,10 @@ void drive_straight() // use 4 sensors?
 
   {
     L_enable_val -= (8*total);
-      constrain(L_enable_val, 15000, 33000);  // may need to adjust
+      constrain(L_enable_val, 15000, 30000);  // may need to adjust
     
     R_enable_val += (8*total); 
-      constrain(R_enable_val, 15000, 33000);
+      constrain(R_enable_val, 15000, 30000);
     
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
