@@ -8,7 +8,7 @@
 #define FALSE 0
 #endif
 
-#define SIZE 6
+#define SIZE 16
 
 
 // Directions
