@@ -135,6 +135,44 @@ int get_smallest_neighbor (Node * this_node) {
 	return smallestneighbor;
 }
 
+
+// Return the next direction that the solver would go
+int get_smallest_neighbor_dir (Node * this_node, int preferred_dir) {
+
+	// get the smallest neighboring flood_val;
+	int smallestval = get_smallest_neighbor(this_node);
+	int pathcount = 0;
+
+	if ((UP != NULL) && (UP->floodval == smallestval))
+    	pathcount++;
+  	if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+    	pathcount++;
+  	if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+    	pathcount++;
+  	if ((LEFT != NULL) && (LEFT->floodval == smallestval))
+    	pathcount++;
+
+    printf("preferred_dir: %d\n", preferred_dir);
+    printf("smallestval: %d\n", smallestval);
+    printf("pathcount: %d\n", pathcount);
+
+    if (pathcount > 1)
+    	return preferred_dir;
+
+    else {
+    	
+		if ((UP != NULL) && (UP->floodval == smallestval))
+		   return NORTH;
+  		else if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+    		return EAST;
+  		else if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+    		return SOUTH;
+  		else //if ((LEFT != NULL) && (LEFT->floodval) == smallestval)
+    		return WEST;
+	}
+}
+
+
 int floodval_check(Node * this_node) {
 
 	if (get_smallest_neighbor (this_node) + 1 == this_node->floodval)
@@ -215,6 +253,7 @@ void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on) {
 	}
 }
 
+
 // Visit cell = Updates a node
 void visit_node (Maze * this_maze, Node * this_node){
 
@@ -250,37 +289,3 @@ void print_map (const Maze * this_maze) {
 }
 
 
-
-// Main
-
-//int main () {
-
-  /*  This stuff below Does not do anything yet... all it does is print values
-
-	READ HERE
-
-	I will probably take out main altogether from this file
-	and then have a separate solver.c for testing the Maze.c code */
-
-	//set_debug_on();
-/*
-	Maze * my_Maze = new_Maze();
-	
-	print_map(my_Maze);
-
-	delete_Maze(&my_Maze);
-*/
-//	newline(stdout);	
-//	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
-//    horiz_wall = decin();   /* Read in from user input */
-//    clrbuf(horiz_wall);     /* get rid of extra input */
-//    newline(stdout);	
-//	writeline ("Please enter Vert. wall #: ", stdout); /* prompt user input */
-//    vert_wall = decin();   /* Read in from user input */
-//    clrbuf(vert_wall);     /* get rid of extra input */
-//	newline(stdout);	
-
-
-//	newline(stdout);	
-//	return 1;
-//}

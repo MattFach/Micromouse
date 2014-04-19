@@ -7,34 +7,112 @@ void dummyfunc() {
 
 }
 
+void check_goal_reached (int * x, int * y, int * found_goal) {
+
+  printf("In check_goal_reached\n");
+
+  if (*x == SIZE / 2 || *x == SIZE / 2 - 1)
+    if (*y == SIZE / 2 || *y == SIZE / 2 - 1) {
+      *(found_goal) = TRUE; 
+    }
+
+}
+
+void move_dir(Maze * this_maze, int * x, int * y, int * dir) {
+
+  // When the parameters are passed, 
+  // x, y are current positions, dir is current directions
+
+  printf("In move_dir\n");
+  printf("preffered_dir: %d\n", *dir );
+
+  Node * this_node = this_maze->map[(*x)][(*y)];
+  int next_dir = get_smallest_neighbor_dir(this_node, *dir);
+  printf("%d\n", next_dir);
+
+  if (next_dir == NORTH) 
+    (*y) = (*y) - 1;
+  else if (next_dir == EAST) 
+    (*x) = (*x) + 1;
+  else if (next_dir == SOUTH) 
+    (*y) = (*y) + 1;
+  else if (next_dir == WEST) 
+    (*x) = (*x) - 1;
+
+  (*dir) = next_dir;
+
+
+
+}
+
+void visit_Node(Maze * this_Maze, int x, int y, int wallval) {
+
+  int northwall, eastwall, southwall, westwall;
+  Node * this_Node = this_Maze->map[x][y];
+
+  northwall = eastwall = southwall = westwall = 0;
+
+  printf("In visit_Node\n");
+
+  if (wallval / 8 == TRUE) {
+    northwall = TRUE;
+    wallval -= 8;
+  }
+
+  if (wallval / 4 == TRUE) {
+    eastwall = TRUE;
+    eastwall -= 4;
+  }
+
+  if (wallval / 2 == TRUE) {
+    southwall = TRUE;
+    southwall -= 2;
+  }
+
+  if (westwall / 1 == TRUE) {
+    westwall = TRUE;
+  }
+
+
+  if (northwall) 
+    set_wall(this_Maze, this_Node, NORTH, TRUE);
+  if (eastwall)
+    set_wall(this_Maze, this_Node, EAST, TRUE);
+  if (southwall)
+    set_wall(this_Maze, this_Node, SOUTH, TRUE);
+  if (westwall)
+    set_wall(this_Maze, this_Node, WEST, TRUE);
+
+
+
+  flood_fill(this_Node);
+
+
+}
+
+
 int getVal(char c)
-   {
-       int rtVal = 0;
+{
+  
+  int rtVal = 0;
 
-       if(c >= '0' && c <= '9')
-       {
-           rtVal = c - '0';
-       }
+  if(c >= '0' && c <= '9')
+      rtVal = c - '0';
+  
+  else
+    rtVal = c - 'a' + 10;
+  
+  return rtVal;
 
-       //else if (c == ' ' || c == '\n')
-       //{
-       	//	rtval = -1;
-      // }
+}
 
-       else
-       {
-           rtVal = c - 'a' + 10;
-       }
-
-       return rtVal;
-   }
 
 int main (int argc, char ** argv) {
 
-	//int direction;
-
-	//int x;
-	//int y;
+  int found_goal;
+	int direction;
+	int x;
+	int y;
 
 	int Walls[SIZE][SIZE];
 	int i, j;
@@ -68,51 +146,28 @@ int main (int argc, char ** argv) {
 		perror("Error while opening file");
 		exit(EXIT_FAILURE);
 	}
-/*
-	while((ch = fgetc(fp))  != EOF)
-    {
-   	  if (ch == ' ' || ch =='\n')
-   	  	continue;
-      int val = getVal(ch) * 16 + getVal(fgetc(fp));
-      printf("current number - %d\n", val);
-    }
-*/
-    for (j = 0; j < SIZE; j++) {
-    	for (i = SIZE-1; i >= 0; i--) {
-    		if((ch = fgetc(fp)) != EOF) {
-    			if (ch == ' ' || ch == '\n') {
-    				i++;
-    				continue;
-    			}
-    			int val = getVal(ch) * 16 + getVal(fgetc(fp));
-//    			printf("current number at %d, %d - %d\n", i, j, val);
-    			Walls[i][j] = val;
-//   			printf("%d\n", Walls[i][j]);
+
+
+  // Reads Values and store them to appropriate array 
+
+  for (j = 0; j < SIZE; j++) {
+    for (i = SIZE-1; i >= 0; i--) {
+    	if((ch = fgetc(fp)) != EOF) {
+    		if (ch == ' ' || ch == '\n') {
+    			i++;
+    			continue;
     		}
-    		
-    	}
+    		int val = getVal(ch) * 16 + getVal(fgetc(fp));
+    		Walls[i][j] = val;
+    	}  		
     }
+  }
+
+  fclose(fp);
 
 
-/*
-	printf("The contents of %s file are :\n", file_name);
-
-	for (i = 0; i < SIZE; i++) {
-		for (j = SIZE-1; j >=0; j--) {
-			fscanf (fp, "%x", &(Walls[i][j]));
-		}
-	}
-)
- 
-    while( ( ch = fgetc(fp) ) != EOF )
-      printf("%c",ch);
- */
-    fclose(fp);
-
-
-    // Prints the wall values... 
-
-    // Status of each cell's walls is represented by an integer, between 0 and 15
+  // Prints the wall values... 
+  // Status of each cell's walls is represented by an integer, between 0 and 15
 /*
 			 _1
 		8	I_I 2
@@ -125,27 +180,33 @@ int main (int argc, char ** argv) {
 
 */
 
-    for (i = 0; i < SIZE; i++) {
-   		for (j = 0; j < SIZE; j++) {
-   			printf("  %2d  ", Walls[i][j]);
-        }
-   	printf("\n");
+  printf("\n");
+  for (i = 0; i < SIZE; i++) {
+   	for (j = 0; j < SIZE; j++) {
+   		printf("  %2d  ", Walls[i][j]);
     }
-
-	delete_Maze(&my_maze);
-
-//	newline(stdout);	
-//	writeline ("Please enter Horiz. wall #: ", stdout); /* prompt user input */
-//    horiz_wall = decin();   /* Read in from user input */
-//    clrbuf(horiz_wall);     /* get rid of extra input */
-//    newline(stdout);	
-//	writeline ("Please enter Vert. wall #: ", stdout); /* prompt user input */
-//    vert_wall = decin();   /* Read in from user input */
-//    clrbuf(vert_wall);     /* get rid of extra input */
-//	newline(stdout);	
+    printf("\n\n");
+  }
+  printf("\n\n");
 
 
-//	newline(stdout);	
+	// Begin Solving!
+  x = 15;
+  y = 0;
+  direction = NORTH;
+  found_goal = FALSE;
+
+  while (!found_goal) {
+    printf("%d, %d\n", x, y);
+    visit_Node(my_maze, x, y, Walls[i][j]);
+    move_dir(my_maze, &x, &y, &direction);
+    print_map(my_maze);
+    check_goal_reached(&x, &y, &found_goal);
+  }
+
+  // Deallocate the Maze
+  delete_Maze(&my_maze);
+
 	return 1;
 }
 

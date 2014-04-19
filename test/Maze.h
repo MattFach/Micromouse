@@ -68,6 +68,8 @@ int get_smallest_neighbor (Node * this_node);
 int floodval_check(Node * this_node) ;
 void update_floodval (Node * this_node);
 void recurse_neighbors (Node * this_node) ;
+// Used by Solver
+int get_smallest_neighbor_dir (Node * this_node, int preferred_dir);
 
 
 // Maze Functions
