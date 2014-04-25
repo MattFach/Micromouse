@@ -25,19 +25,20 @@ void move_dir(Maze * this_maze, int * x, int * y, int * dir) {
 
   printf("In move_dir\n");
   printf("preffered_dir: %d\n", *dir );
+  printf("current coords: %d,%d\n", *x, *y);
 
   Node * this_node = this_maze->map[(*x)][(*y)];
   int next_dir = get_smallest_neighbor_dir(this_node, *dir);
   printf("%d\n", next_dir);
 
   if (next_dir == NORTH) 
-    (*y) = (*y) - 1;
-  else if (next_dir == EAST) 
-    (*x) = (*x) + 1;
-  else if (next_dir == SOUTH) 
-    (*y) = (*y) + 1;
-  else if (next_dir == WEST) 
     (*x) = (*x) - 1;
+  else if (next_dir == EAST) 
+    (*y) = (*y) + 1;
+  else if (next_dir == SOUTH) 
+    (*x) = (*x) + 1;
+  else if (next_dir == WEST) 
+    (*y) = (*y) - 1;
 
   (*dir) = next_dir;
 
@@ -53,26 +54,28 @@ void visit_Node(Maze * this_Maze, int x, int y, int wallval) {
   northwall = eastwall = southwall = westwall = 0;
 
   printf("In visit_Node\n");
+  printf("wallval: %d\n", wallval);
 
   if (wallval / 8 == TRUE) {
-    northwall = TRUE;
+    westwall = TRUE;
     wallval -= 8;
   }
 
   if (wallval / 4 == TRUE) {
-    eastwall = TRUE;
-    eastwall -= 4;
+    southwall = TRUE;
+    wallval -= 4;
   }
 
   if (wallval / 2 == TRUE) {
-    southwall = TRUE;
-    southwall -= 2;
+    eastwall = TRUE;
+    wallval -= 2;
   }
 
-  if (westwall / 1 == TRUE) {
-    westwall = TRUE;
+  if (wallval / 1 == TRUE) {
+    northwall = TRUE;
   }
 
+  printf("N,E,S,W : %d, %d, %d, %d\n", northwall, eastwall, southwall, westwall);
 
   if (northwall) 
     set_wall(this_Maze, this_Node, NORTH, TRUE);
@@ -82,8 +85,6 @@ void visit_Node(Maze * this_Maze, int x, int y, int wallval) {
     set_wall(this_Maze, this_Node, SOUTH, TRUE);
   if (westwall)
     set_wall(this_Maze, this_Node, WEST, TRUE);
-
-
 
   flood_fill(this_Node);
 
@@ -198,10 +199,16 @@ int main (int argc, char ** argv) {
 
   while (!found_goal) {
     printf("%d, %d\n", x, y);
-    visit_Node(my_maze, x, y, Walls[i][j]);
+    visit_Node(my_maze, x, y, Walls[x][y]);
     move_dir(my_maze, &x, &y, &direction);
     print_map(my_maze);
     check_goal_reached(&x, &y, &found_goal);
+    if (x < 0 || y < 0) {
+      printf("NEGATIVE COORD: ERROR\n");
+      return 0;
+    }
+    printf("press any key to continue...\n");
+    getchar();
   }
 
   // Deallocate the Maze
