@@ -126,7 +126,7 @@ void delete_Maze (Maze ** mpp) {
 
 int get_smallest_neighbor (Node * this_node) {
 
-	printf("In get_smallest_neighbor\n");
+	//printf("In get_smallest_neighbor\n");
 
 	// The Node's floodval will be 1 higher than the neigboring cell
 	int smallestneighbor = 255;
@@ -134,16 +134,16 @@ int get_smallest_neighbor (Node * this_node) {
 	// NOTE: LEFT, RIGHT, etc, are substituting:
 	// this_node->left, this_node->right, etc.
 
-	if (LEFT != NULL && (LEFT->floodval) < smallestneighbor)
+	if (LEFT != NULL && (LEFT->right != NULL) && (LEFT->floodval) < smallestneighbor)
 		smallestneighbor = LEFT->floodval;
 
-	if (RIGHT != NULL && (RIGHT->floodval) < smallestneighbor)
+	if (RIGHT != NULL && (RIGHT->left != NULL) && (RIGHT->floodval) < smallestneighbor)
 		smallestneighbor = RIGHT->floodval;	
 
-	if (UP != NULL && (UP->floodval) < smallestneighbor)
+	if (UP != NULL && (UP->down != NULL) && (UP->floodval) < smallestneighbor)
 		smallestneighbor = UP->floodval;
 
-	if (DOWN != NULL && (DOWN->floodval) < smallestneighbor)
+	if (DOWN != NULL && (DOWN->up != NULL) && (DOWN->floodval) < smallestneighbor)
 		smallestneighbor = DOWN->floodval;
 
 	return smallestneighbor;
@@ -153,7 +153,7 @@ int get_smallest_neighbor (Node * this_node) {
 // Return the next direction that the solver would go
 int get_smallest_neighbor_dir (Node * this_node, int preferred_dir) {
 
-	printf("In get_smallest_neighbor_dir\n");
+	//printf("In get_smallest_neighbor_dir\n");
 
 	// get the smallest neighboring flood_val;
 	int smallestval = get_smallest_neighbor(this_node);
@@ -235,23 +235,29 @@ void recurse_neighbors (Node * this_node) {
 	// A NULL neighbor represents a wall
 	// If neighbor is accessible, call floodfill w/neighbor @ param
 
-	if (LEFT != NULL) 
+	if (LEFT != NULL && LEFT->right != NULL) 
 		flood_fill (LEFT);
 
-	if (RIGHT != NULL) 
+	if (RIGHT != NULL && RIGHT->left != NULL) 
 		flood_fill (RIGHT);
 
-	if (UP != NULL) 
+	if (UP != NULL && UP->down != NULL) 
 		flood_fill (UP);
 
-	if (DOWN != NULL) 
+	if (DOWN != NULL && DOWN->up != NULL) 
 		flood_fill (DOWN);
 
 }
 
 void flood_fill (Node * this_node) {
 
-	printf("In flood_fill\n");
+	printf("In flood_fill (%d, %d) \n", this_node->row, this_node->column);
+
+	/* We want to avoid flood-filling a 0 value by accident
+	   especially if the goal is a 2x2 square of 0, it does not
+	   make sense to do a flood_fill there, causes trouble. */
+	if (FLOODVAL == 0)
+		return;
 
 	int status;  // Flag for valid floodval
 	
@@ -261,10 +267,47 @@ void flood_fill (Node * this_node) {
 	// if no, change current cell to 1 + minimum adjascent open cell
 	// Then push open neighbors to the recursive stack.
 	if (!status) {
-		update_floodval (this_node); // Update floodval to 1 + min open neighbor
+		update_floodval(this_node); // Update floodval to 1 + min open neighbor
 		recurse_neighbors(this_node); // Recursive call to neighbors
 	}
 	
+	//else {
+		
+		if (LEFT != NULL && LEFT->floodval != 0) {
+			status = floodval_check (LEFT);
+			if (!status) {
+				update_floodval(LEFT);
+				recurse_neighbors(LEFT);
+			}	
+		}
+			
+		if (RIGHT != NULL && RIGHT->floodval != 0) {
+			status = floodval_check (RIGHT);
+			if (!status) {
+				update_floodval(RIGHT);
+				recurse_neighbors(RIGHT);
+			}		
+		}
+		
+		if (UP != NULL && UP->floodval != 0) {
+			status = floodval_check (UP);
+			if (!status) {
+				update_floodval(UP);
+				recurse_neighbors(UP);
+			}	
+		}
+		
+		if (DOWN != NULL && DOWN->floodval != 0) {
+			status = floodval_check (DOWN);
+			if (!status) {
+				update_floodval(DOWN);
+				recurse_neighbors(DOWN);
+			}	
+		}
+		
+	//}
+	
+
 }
 
 // We really do not need to pass Maze * this_maze, 

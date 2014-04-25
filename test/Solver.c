@@ -9,11 +9,12 @@ void dummyfunc() {
 
 void check_goal_reached (int * x, int * y, int * found_goal) {
 
-  printf("In check_goal_reached\n");
+  //printf("In check_goal_reached\n");
 
   if (*x == SIZE / 2 || *x == SIZE / 2 - 1)
     if (*y == SIZE / 2 || *y == SIZE / 2 - 1) {
-      *(found_goal) = TRUE; 
+      *(found_goal) = TRUE;
+      printf("Goal Coordinates Reached: %d, %d\n", *x, *y); 
     }
 
 }
@@ -201,14 +202,19 @@ int main (int argc, char ** argv) {
     printf("%d, %d\n", x, y);
     visit_Node(my_maze, x, y, Walls[x][y]);
     move_dir(my_maze, &x, &y, &direction);
+    printf("\nCurrent Location: %d,%d", x, y);
     print_map(my_maze);
     check_goal_reached(&x, &y, &found_goal);
     if (x < 0 || y < 0) {
       printf("NEGATIVE COORD: ERROR\n");
       return 0;
     }
-    printf("press any key to continue...\n");
-    getchar();
+    if (found_goal)
+      printf("press enter to end simulation...\n");
+    else
+      printf("press enter to continue...\n");
+    while(getchar() == 13);
+    
   }
 
   // Deallocate the Maze
