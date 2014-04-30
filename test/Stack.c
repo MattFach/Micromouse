@@ -3,7 +3,7 @@
 #include "Maze.h"
 
 
-
+// Stack Constructor
 Stack * new_Stack() {
 
 	Stack * this_stack = malloc(sizeof(Stack));
@@ -15,6 +15,7 @@ Stack * new_Stack() {
 	return this_stack;
 }
 
+// Stack Destructor
 void delete_Stack (Stack ** spp) {
 
 	if (spp == 0 || *spp == 0) {
@@ -28,6 +29,8 @@ void delete_Stack (Stack ** spp) {
 
 }
 
+
+// Checks if this_stack is empty
 int is_empty_Stack (Stack * this_stack) {
 
 	printf("%d\n", this_stack->properties[SPI]);
@@ -37,6 +40,7 @@ int is_empty_Stack (Stack * this_stack) {
 	else return 0;
 }
 
+// Pops the top element of this_stack
 void pop (Stack * this_stack, Node ** npp) {
 
 
@@ -50,6 +54,7 @@ void pop (Stack * this_stack, Node ** npp) {
 
 }
 
+// Pushes an element to the top of this_stack
 void push (Stack * this_stack, Node * this_node) {
 
 	int index;

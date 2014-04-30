@@ -9,7 +9,6 @@
 #endif
 
 #define SIZE 16
-#define STACKSIZE 80
 
 
 // Directions
@@ -30,10 +29,11 @@
 #define DOWN this_node->down
 
 // Stack Constants
-#define SPI 2
-#define SSI 1
-#define SCI 0
+#define SPI 2			// Stack Pointer Index
+#define SSI 1 			// Stack Size Index
+#define SCI 0			// Stack Counter Index.. Not used.
 #define STACK_OFFSET 3
+#define STACKSIZE 80
 
 
 typedef struct Node { 
