@@ -8,7 +8,7 @@
 #define FALSE 0
 #endif
 
-#define SIZE 16
+#define SIZE 16			// Size of one dimention of Map
 
 
 // Directions
