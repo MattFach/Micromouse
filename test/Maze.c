@@ -222,37 +222,36 @@ int floodval_check(Node * this_node) {
 
 void update_floodval (Node * this_node) {
 
-	//printf("In update_floodval\n");
+	printf("In update_floodval\n");
 
 	this_node->floodval = get_smallest_neighbor (this_node) + 1;
 
 }
 
-void recurse_neighbors (Node * this_node) {
+void push_open_neighbors (Node * this_node, Stack * this_stack) {
 
-	//printf("In recurse_neighbors\n");
+	printf("In _neighbors\n");
 
 	// A NULL neighbor represents a wall
 	// If neighbor is accessible, call floodfill w/neighbor @ param
 
 	if (LEFT != NULL && LEFT->right != NULL) 
-		flood_fill (LEFT);
+		push (this_stack, LEFT);
 
 	if (RIGHT != NULL && RIGHT->left != NULL) 
-		flood_fill (RIGHT);
+		push (this_stack, RIGHT);
 
 	if (UP != NULL && UP->down != NULL) 
-		flood_fill (UP);
+		push (this_stack, UP);
 
 	if (DOWN != NULL && DOWN->up != NULL) 
-		flood_fill (DOWN);
+		push (this_stack, DOWN);
 
 }
 
-void flood_fill (Node * this_node) {
+void flood_fill (Node * this_node, Stack * this_stack) {
 
 	printf("In flood_fill (%d, %d) \n", this_node->row, this_node->column);
-
 	/* We want to avoid flood-filling a 0 value by accident
 	   especially if the goal is a 2x2 square of 0, it does not
 	   make sense to do a flood_fill there, causes trouble. */
@@ -264,13 +263,18 @@ void flood_fill (Node * this_node) {
 	// is the cell (1 + minumum OPEN adjascent cell) ?
 	status = floodval_check (this_node);
 
+	printf("status: %d\n", status);
 	// if no, change current cell to 1 + minimum adjascent open cell
 	// Then push open neighbors to the recursive stack.
 	if (!status) {
 		update_floodval(this_node); // Update floodval to 1 + min open neighbor
-		recurse_neighbors(this_node); // Recursive call to neighbors
+		push_open_neighbors(this_node, this_stack); // Recursive call to neighbors
 	}
 	
+	printf ("Exiting flood_fill (%d, %d)\n", this_node->row, this_node->column);
+
+
+	/*
 	//else {
 		
 		if (LEFT != NULL && LEFT->floodval != 0) {
@@ -306,8 +310,7 @@ void flood_fill (Node * this_node) {
 		}
 		
 	//}
-	
-
+	*/
 }
 
 // We really do not need to pass Maze * this_maze, 
@@ -350,19 +353,6 @@ void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on) {
 			break;
 
 	}
-}
-
-
-// Visit cell = Updates a node
-void visit_node (Maze * this_maze, Node * this_node){
-
-	this_node->traveled_to = TRUE;
-
-	// Use sensors to obtain wall information...
-	// Call(s) to set_wall(this_maze, this_node, ...) to update wall info
-
-	flood_fill (this_node);
-
 }
 
 
