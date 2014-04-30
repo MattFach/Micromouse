@@ -8,7 +8,7 @@
 #define FALSE 0
 #endif
 
-#define SIZE 6
+#define SIZE 16			// Size of one dimention of Map
 
 
 // Directions
@@ -19,6 +19,7 @@
 
 // Shortcut Constants
 #define MAPIJ this_maze->map[i][j]
+#define MAP this_maze->map
 #define FLOODVAL this_node->floodval
 #define ROW this_node->row
 #define COL this_node->column
@@ -26,6 +27,14 @@
 #define RIGHT this_node->right
 #define UP this_node->up
 #define DOWN this_node->down
+
+// Stack Constants
+#define SPI 2			// Stack Pointer Index
+#define SSI 1 			// Stack Size Index
+#define SCI 0			// Stack Counter Index.. Not used.
+#define STACK_OFFSET 3
+#define STACKSIZE 80
+
 
 typedef struct Node { 
 
@@ -56,22 +65,41 @@ typedef struct Maze {
 
 } Maze;
 
+typedef struct Stack {
+
+	int properties [STACK_OFFSET];
+	Node * the_stack [STACKSIZE];
+
+} Stack;
+
 
 // Node Functions
 struct Node * new_Node ();
-void flood_fill (Node * this_node);
+void delete_Node (Node ** npp);
+void flood_fill (Node * this_node, Stack * this_stack);
 void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on);
 
 // Floodfill Helper Functions
 int get_smallest_neighbor (Node * this_node);
 int floodval_check(Node * this_node) ;
 void update_floodval (Node * this_node);
-void recurse_neighbors (Node * this_node) ;
+void push_open_neighbors (Node * this_node, Stack * this_stack);
+// Used by Solver
+int get_smallest_neighbor_dir (Node * this_node, int preferred_dir);
 
 
 // Maze Functions
 struct Maze * new_Maze ();
+void delete_Maze (Maze ** mpp);
 void print_map (const Maze * this_maze);
+
+
+// Stack Functions
+Stack * new_Stack();
+void delete_Stack (Stack ** spp);
+int is_empty_Stack (Stack * this_stack);
+void pop (Stack * this_stack, Node ** npp);
+void push (Stack * this_stack, Node * this_node);
 
 // Debug On, Off
 void set_debug_on ();
