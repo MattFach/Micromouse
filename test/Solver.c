@@ -3,10 +3,6 @@
 #include <getopt.h>
 #include "Maze.h"
 
-void dummyfunc() {
-
-}
-
 void check_goal_reached (int * x, int * y, int * found_goal) {
 
   //printf("In check_goal_reached\n");
@@ -47,10 +43,10 @@ void move_dir(Maze * this_maze, int * x, int * y, int * dir) {
 
 }
 
-void visit_Node(Maze * this_Maze, int x, int y, int wallval) {
+void visit_Node(Maze * this_maze, Stack * this_stack, int x, int y, int wallval) {
 
   int northwall, eastwall, southwall, westwall;
-  Node * this_Node = this_Maze->map[x][y];
+  Node * this_node = this_maze->map[x][y];
 
   northwall = eastwall = southwall = westwall = 0;
 
@@ -78,17 +74,33 @@ void visit_Node(Maze * this_Maze, int x, int y, int wallval) {
 
   printf("N,E,S,W : %d, %d, %d, %d\n", northwall, eastwall, southwall, westwall);
 
-  if (northwall) 
-    set_wall(this_Maze, this_Node, NORTH, TRUE);
-  if (eastwall)
-    set_wall(this_Maze, this_Node, EAST, TRUE);
-  if (southwall)
-    set_wall(this_Maze, this_Node, SOUTH, TRUE);
-  if (westwall)
-    set_wall(this_Maze, this_Node, WEST, TRUE);
+  if (northwall) {
+    if (this_node->row != 0)
+      push (this_stack, MAP[ROW-1][COL]);
+    set_wall(this_maze, this_node, NORTH, TRUE);
+  }
+  if (eastwall) {
+    if (this_node->column != SIZE-1)
+      push (this_stack, MAP[ROW][COL+1]);
+    set_wall(this_maze, this_node, EAST, TRUE);
+  }
+  if (southwall) {
+    if (this_node->row != SIZE-1)
+      push (this_stack, MAP[ROW+1][COL]);
+    set_wall(this_maze, this_node, SOUTH, TRUE);
+  }
+  if (westwall) {
+    if (this_node->column != 0)
+      push (this_stack, MAP[ROW][COL-1]);
+    set_wall(this_maze, this_node, WEST, TRUE);
+  }
 
-  flood_fill(this_Node);
+  push(this_stack, this_node);
 
+  while (!is_empty_Stack(this_stack)) {
+    pop(this_stack, &this_node);
+    flood_fill(this_node, this_stack);
+  }
 
 }
 
@@ -126,6 +138,8 @@ int main (int argc, char ** argv) {
 	FILE *fp;
 	//int command;
 
+  Stack * my_stack;
+
 	set_debug_off();
 
 	// Checks for the debug flag x in command line argument
@@ -135,6 +149,10 @@ int main (int argc, char ** argv) {
 
 	// Initialize new maze
 	my_maze = new_Maze();
+
+  // Initialize new stack
+  my_stack = new_Stack();
+
 	
 	print_map(my_maze);
 
@@ -200,7 +218,7 @@ int main (int argc, char ** argv) {
 
   while (!found_goal) {
     printf("%d, %d\n", x, y);
-    visit_Node(my_maze, x, y, Walls[x][y]);
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y]);
     move_dir(my_maze, &x, &y, &direction);
     printf("\nCurrent Location: %d,%d", x, y);
     print_map(my_maze);
