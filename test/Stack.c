@@ -33,7 +33,7 @@ void delete_Stack (Stack ** spp) {
 // Checks if this_stack is empty
 int is_empty_Stack (Stack * this_stack) {
 
-	printf("%d\n", this_stack->properties[SPI]);
+	//printf("%d\n", this_stack->properties[SPI]);
 
 	if (this_stack->properties[SPI] == 0)
 		return 1;

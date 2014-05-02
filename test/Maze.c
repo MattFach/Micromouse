@@ -274,43 +274,14 @@ void flood_fill (Node * this_node, Stack * this_stack) {
 	printf ("Exiting flood_fill (%d, %d)\n", this_node->row, this_node->column);
 
 
-	/*
-	//else {
-		
-		if (LEFT != NULL && LEFT->floodval != 0) {
-			status = floodval_check (LEFT);
-			if (!status) {
-				update_floodval(LEFT);
-				recurse_neighbors(LEFT);
-			}	
-		}
-			
-		if (RIGHT != NULL && RIGHT->floodval != 0) {
-			status = floodval_check (RIGHT);
-			if (!status) {
-				update_floodval(RIGHT);
-				recurse_neighbors(RIGHT);
-			}		
-		}
-		
-		if (UP != NULL && UP->floodval != 0) {
-			status = floodval_check (UP);
-			if (!status) {
-				update_floodval(UP);
-				recurse_neighbors(UP);
-			}	
-		}
-		
-		if (DOWN != NULL && DOWN->floodval != 0) {
-			status = floodval_check (DOWN);
-			if (!status) {
-				update_floodval(DOWN);
-				recurse_neighbors(DOWN);
-			}	
-		}
-		
-	//}
-	*/
+	
+}
+
+void set_value (Node * this_node, int value) {
+
+	printf("In set_value\n");
+	FLOODVAL = value;
+	printf("Floodval set to : %d\n", FLOODVAL);
 }
 
 // We really do not need to pass Maze * this_maze, 

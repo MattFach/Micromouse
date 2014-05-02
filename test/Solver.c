@@ -3,6 +3,15 @@
 #include <getopt.h>
 #include "Maze.h"
 
+void check_start_reached (int * x, int * y, int * found_goal) {
+
+  if (*x == 15 && *y == 0) {
+    *found_goal = TRUE;
+    printf("Goal Coorinates Reached: %d, %d\n", *x, *y);
+  }
+
+}
+
 void check_goal_reached (int * x, int * y, int * found_goal) {
 
   //printf("In check_goal_reached\n");
@@ -139,6 +148,7 @@ int main (int argc, char ** argv) {
 	//int command;
 
   Stack * my_stack;
+  //Node * temp;
 
 	set_debug_off();
 
@@ -234,6 +244,47 @@ int main (int argc, char ** argv) {
     while(getchar() == 13);
     
   }
+
+  /* read the walls around goal */
+  /*
+  for (int i = 0, i < 4, i++) {
+
+
+
+  }
+  */
+
+  /* reset found_goal for returning to start */
+  //found_goal = FALSE;
+
+  /* set goal to 0, then reflood maze */
+  /*
+  set_value(my_maze->map[15][0], 0);
+  push_open_neighbors (my_maze->map[15][0], my_stack);
+  while (!is_empty_Stack(my_stack)) {
+    pop(my_stack, &temp);
+    flood_fill(temp, my_stack);
+  }
+
+  while (!found_goal) {
+    printf("%d, %d\n", x, y);
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y]);
+    move_dir(my_maze, &x, &y, &direction);
+    printf("\nCurrent Location: %d,%d", x, y);
+    print_map(my_maze);
+    check_start_reached(&x, &y, &found_goal);
+    if (x < 0 || y < 0) {
+      printf("NEGATIVE COORD: ERROR\n");
+      return 0;
+    }
+    if (found_goal)
+      printf("press enter to end simulation...\n");
+    else
+      printf("press enter to continue...\n");
+    while(getchar() == 13);
+    
+  }
+*/
 
   // Deallocate the Maze
   delete_Maze(&my_maze);

@@ -78,6 +78,7 @@ struct Node * new_Node ();
 void delete_Node (Node ** npp);
 void flood_fill (Node * this_node, Stack * this_stack);
 void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on);
+void set_value (Node * this_node, int value);
 
 // Floodfill Helper Functions
 int get_smallest_neighbor (Node * this_node);
