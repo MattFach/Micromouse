@@ -111,8 +111,8 @@ SerialUSB.print("    ");
 SerialUSB.println(sizeof(maze));
 
 motor_test();
-drive_straight();
-delay(100);
+//drive_straight();
+//delay(100);
 //	turn_left();
 
 //	delay(2000);
