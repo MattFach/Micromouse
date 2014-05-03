@@ -25,14 +25,14 @@ const int led1 = 15, led2 = 16, led3 = 17, led4 = 18, led5 = 19;  // test led pi
 
 const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24;   // switch pins
 
-const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
+const int R_fwd = 13, R_bkw = 12, L_fwd = 7, L_bkw = 6;  // (verify)  motor direction pins
 
-const int standby1 = 29;
+const int standby1 = 29, standby2 = 28;
 
-const int Kp = .85, Kd = 0;
+//const int Kp = .85, Kd = 0;
 
-int R_enable_val = 33000;  // initialize enable values high
-int L_enable_val = 33000;
+int R_enable_val = 16000;  // initialize enable values high
+int L_enable_val = 15000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -91,9 +91,11 @@ void setup()
   pinMode(R_bkw, OUTPUT);
   pinMode(L_fwd, OUTPUT);
   pinMode(L_bkw, OUTPUT);
-  pinMode(stadby1, OUTPUT);
+  pinMode(standby1, OUTPUT);
+  pinMode(standby2, OUTPUT);
   
  digitalWrite(standby1, HIGH);
+ digitalWrite(standby2, HIGH);
  
  
   pwmWrite(right_enable, R_enable_val);
@@ -106,13 +108,11 @@ void setup()
 void loop()
 {
   
-SerialUSB.print(sizeof(struct node));
-SerialUSB.print("    ");
-SerialUSB.println(sizeof(maze));
 
-motor_test();
-//drive_straight();
-//delay(100);
+
+//motor_test();
+drive_straight();
+delay(100);
 //	turn_left();
 
 //	delay(2000);
@@ -202,11 +202,11 @@ void motor_test()  // motor testing function
   pwmWrite(right_enable, R_enable_val);
   pwmWrite(left_enable, L_enable_val);
   
-  digitalWrite(R_bkw, HIGH);
-  digitalWrite(L_bkw, HIGH);
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
   
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_fwd, HIGH);
   /*
   delay(1000);
   
@@ -215,7 +215,7 @@ void motor_test()  // motor testing function
   
   delay(100);
   
-  digitalWrite(R_fwd, HIGH);
+  digitalWrite(R_bkw, HIGH);
   digitalWrite(L_bkw, HIGH);
   
   delay(1000);
@@ -355,11 +355,12 @@ void drive_straight() // use 4 sensors?
   int error;  // error values
   static int last_big = 0;
   int biggest;
-  int total;
+  double total;
   int time_now;
   static int previous_time = 0;
   bool good;
   int left90, left45, right45, right90;
+  double Kp = .5;
   
   if(previous_time)
   {
@@ -371,10 +372,16 @@ void drive_straight() // use 4 sensors?
     return;
   }
   
-  left90 = analogRead(sense_1);  // verify sensor orientation
-  right90 = analogRead(sense_5);
-  left45 = analogRead(sense_2);
-  right45 = analogRead(sense_3);
+  left90 = analogRead(L90sensor);  // verify sensor orientation
+  right90 = analogRead(R90sensor);
+  //left45 = analogRead(sense_2);
+ // right45 = analogRead(sense_3);
+  
+  SerialUSB.print(left90);
+SerialUSB.print("   ");
+SerialUSB.print(right90);
+SerialUSB.print("   ");
+
     
   
   if(1)
@@ -423,7 +430,7 @@ void drive_straight() // use 4 sensors?
   
   if(good)
   {
-    total = error * Kp + (error - previous_error) / (time_now - previous_time) * Kd;
+    total = error * Kp; // + (error - previous_error) / (time_now - previous_time) * Kd;
   }
   
   else
@@ -436,10 +443,34 @@ void drive_straight() // use 4 sensors?
     previous_time = time_now;
     
     L_enable_val -= (total);
-      constrain(L_enable_val, 20000, 33000);  // may need to adjust
+
+    if(L_enable_val < 10000)
+    {
+      L_enable_val = 10000;
+    }
+    else if(L_enable_val > 15000)
+    {
+      L_enable_val = 15000;
+    }
+   //   constrain(L_enable_val, 5000, 14000);  // may need to adjust
     
     R_enable_val += (total); 
-      constrain(R_enable_val, 20000, 33000);
+    
+    if(R_enable_val < 10000)
+    {
+      R_enable_val = 10000;
+    }
+    else if(L_enable_val > 15000)
+    {
+      R_enable_val = 15000;
+    }
+   //   constrain(R_enable_val, 5000, 15000);
+      
+    SerialUSB.print(L_enable_val);
+    SerialUSB.print("   ");
+    SerialUSB.print(R_enable_val);
+    SerialUSB.print("   ");
+    SerialUSB.println(total);
     
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
