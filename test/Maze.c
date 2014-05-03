@@ -150,6 +150,32 @@ int get_smallest_neighbor (Node * this_node) {
 }
 
 
+int get_largest_neighbor (Node * this_node) {
+
+	//printf("In get_smallest_neighbor\n");
+
+	// The Node's floodval will be 1 higher than the neigboring cell
+	int largestneighbor = -90;
+
+	// NOTE: LEFT, RIGHT, etc, are substituting:
+	// this_node->left, this_node->right, etc.
+
+	if (LEFT != NULL && (LEFT->right != NULL) && (LEFT->floodval) > largestneighbor)
+		largestneighbor = LEFT->floodval;
+
+	if (RIGHT != NULL && (RIGHT->left != NULL) && (RIGHT->floodval) > largestneighbor)
+		largestneighbor = RIGHT->floodval;	
+
+	if (UP != NULL && (UP->down != NULL) && (UP->floodval) > largestneighbor)
+		largestneighbor = UP->floodval;
+
+	if (DOWN != NULL && (DOWN->up != NULL) && (DOWN->floodval) > largestneighbor)
+		largestneighbor = DOWN->floodval;
+
+	return largestneighbor;
+}
+
+
 // Return the next direction that the solver would go
 int get_smallest_neighbor_dir (Node * this_node, int preferred_dir) {
 
@@ -207,6 +233,12 @@ int get_smallest_neighbor_dir (Node * this_node, int preferred_dir) {
 	}
 }
 
+int reverse_floodval_check (Node * this_node) {
+	if (get_largest_neighbor (this_node) - 1 == this_node->floodval)
+		return TRUE;
+	else
+		return FALSE;
+}
 
 int floodval_check(Node * this_node) {
 
@@ -218,6 +250,14 @@ int floodval_check(Node * this_node) {
 
 	else 
 		return FALSE;
+}
+
+void update_reverse_floodval (Node * this_node) {
+
+	printf("In update_reverse_floodval\n");
+
+	this_node->floodval = get_largest_neighbor (this_node) - 1;
+
 }
 
 void update_floodval (Node * this_node) {
@@ -255,7 +295,7 @@ void flood_fill (Node * this_node, Stack * this_stack) {
 	/* We want to avoid flood-filling a 0 value by accident
 	   especially if the goal is a 2x2 square of 0, it does not
 	   make sense to do a flood_fill there, causes trouble. */
-	if (FLOODVAL == 0)
+	if (FLOODVAL <= 0)
 		return;
 
 	int status;  // Flag for valid floodval
@@ -268,6 +308,34 @@ void flood_fill (Node * this_node, Stack * this_stack) {
 	// Then push open neighbors to the recursive stack.
 	if (!status) {
 		update_floodval(this_node); // Update floodval to 1 + min open neighbor
+		push_open_neighbors(this_node, this_stack); // Recursive call to neighbors
+	}
+	
+	printf ("Exiting flood_fill (%d, %d)\n", this_node->row, this_node->column);
+
+
+	
+}
+
+void reverse_flood_fill (Node * this_node, Stack * this_stack) {
+
+	printf("In reverse_flood_fill (%d, %d) \n", this_node->row, this_node->column);
+	/* We want to avoid flood-filling a 0 value by accident
+	   especially if the goal is a 2x2 square of 0, it does not
+	   make sense to do a flood_fill there, causes trouble. */
+	//if (FLOODVAL == 0)
+	//	return;
+
+	int status;  // Flag for valid floodval
+	
+	// is the cell (1 + minumum OPEN adjascent cell) ?
+	status = reverse_floodval_check (this_node);
+
+	printf("status: %d\n", status);
+	// if no, change current cell to 1 + minimum adjascent open cell
+	// Then push open neighbors to the recursive stack.
+	if (!status) {
+		update_reverse_floodval(this_node); // Update floodval to 1 + min open neighbor
 		push_open_neighbors(this_node, this_stack); // Recursive call to neighbors
 	}
 	

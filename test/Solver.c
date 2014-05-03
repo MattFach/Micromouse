@@ -49,15 +49,16 @@ void move_dir(Maze * this_maze, int * x, int * y, int * dir) {
   (*dir) = next_dir;
 
 
-
 }
 
-void visit_Node(Maze * this_maze, Stack * this_stack, int x, int y, int wallval) {
+
+void visit_Node(Maze * this_maze, Stack * this_stack, int x, int y, int wallval, int flag) {
 
   int northwall, eastwall, southwall, westwall;
   Node * this_node = this_maze->map[x][y];
 
   northwall = eastwall = southwall = westwall = 0;
+
 
   printf("In visit_Node\n");
   printf("wallval: %d\n", wallval);
@@ -104,13 +105,19 @@ void visit_Node(Maze * this_maze, Stack * this_stack, int x, int y, int wallval)
     set_wall(this_maze, this_node, WEST, TRUE);
   }
 
-  push(this_stack, this_node);
+  if (!flag) {
 
-  while (!is_empty_Stack(this_stack)) {
-    pop(this_stack, &this_node);
-    flood_fill(this_node, this_stack);
+    push(this_stack, this_node);
+    
+    while (!is_empty_Stack(this_stack)) {
+      pop(this_stack, &this_node);
+      flood_fill(this_node, this_stack);
+    }
+
+    
   }
 
+  
 }
 
 
@@ -148,7 +155,9 @@ int main (int argc, char ** argv) {
 	//int command;
 
   Stack * my_stack;
+ //
   //Node * temp;
+  int max_floodval;
 
 	set_debug_off();
 
@@ -228,7 +237,7 @@ int main (int argc, char ** argv) {
 
   while (!found_goal) {
     printf("%d, %d\n", x, y);
-    visit_Node(my_maze, my_stack, x, y, Walls[x][y]);
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y], 0);
     move_dir(my_maze, &x, &y, &direction);
     printf("\nCurrent Location: %d,%d", x, y);
     print_map(my_maze);
@@ -239,33 +248,96 @@ int main (int argc, char ** argv) {
     }
     if (found_goal)
       printf("press enter to end simulation...\n");
-    else
-      printf("press enter to continue...\n");
-    while(getchar() == 13);
+    //else
+    //  printf("press enter to continue...\n");
+    //while(getchar() == 13);
     
   }
+  printf("press enter to continue...\n");
+    while(getchar() == 13);
+    
 
   /* read the walls around goal */
-  /*
-  for (int i = 0, i < 4, i++) {
-
-
-
+  
+  for (int i = 0; i < 4; i++) {
+    
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y], 0);  
+    if ( x == SIZE / 2 - 1 && y == SIZE / 2 - 1 )
+      x++;
+    else if ( x == SIZE / 2 && y == SIZE / 2 - 1 ) 
+      y++;
+    else if ( x == SIZE / 2 && y == SIZE / 2 ) 
+      x--;
+    else 
+      y--;
+    printf("\nCurrent Location: %d,%d", x, y);
+    print_map(my_maze);
+    printf("press enter to continue...\n");
+    while(getchar() == 13);
   }
+  
+  /* reset found_goal for returning to start */
+  found_goal = FALSE;
+
+
+  
+  max_floodval = my_maze->map[15][0]->floodval;
+
+
+  /* Set all floodvals to reverse */
+  /*
+  for (int i = 0; i < SIZE; i++)
+    for (int j = 0; j < SIZE; j++) {
+
+      set_value(my_maze->map[i][j], max_floodval - my_maze->map[i][j]->floodval);
+    }
+
+  print_map(my_maze);
+   printf("press enter to continue...\n");
+    while(getchar() == 13);
   */
 
-  /* reset found_goal for returning to start */
-  //found_goal = FALSE;
 
+  
   /* set goal to 0, then reflood maze */
-  /*
-  set_value(my_maze->map[15][0], 0);
+  //set_value(my_maze->map[0][0)
+
+
+ // set_value(my_maze->map[15][0], 0);
+ //     while(getchar() == 13);
+
+/*
   push_open_neighbors (my_maze->map[15][0], my_stack);
   while (!is_empty_Stack(my_stack)) {
     pop(my_stack, &temp);
+    //reverse_flood_fill(temp, my_stack);
     flood_fill(temp, my_stack);
   }
 
+  print_map(my_maze);
+
+  set_value(my_maze->map[8][7], 64);
+      while(getchar() == 13);
+  set_value(my_maze->map[7][7], 65);
+      while(getchar() == 13);
+  set_value(my_maze->map[7][8], 65);
+      while(getchar() == 13);
+  set_value(my_maze->map[8][7], 66);
+      while(getchar() == 13);
+  */
+
+  /*
+  push_open_neighbors (my_maze->map[8][7], my_stack);
+  while (!is_empty_Stack(my_stack)) {
+    pop(my_stack, &temp);
+    reverse_flood_fill(temp, my_stack);
+    //flood_fill(temp, my_stack);
+  }
+  */
+  
+  print_map(my_maze);
+
+/*
   while (!found_goal) {
     printf("%d, %d\n", x, y);
     visit_Node(my_maze, my_stack, x, y, Walls[x][y]);

@@ -87,6 +87,11 @@ void update_floodval (Node * this_node);
 void push_open_neighbors (Node * this_node, Stack * this_stack);
 // Used by Solver
 int get_smallest_neighbor_dir (Node * this_node, int preferred_dir);
+int get_largest_neighbor (Node * this_node);
+int reverse_floodval_check(Node * this_node) ;
+void update_reverse_floodval (Node * this_node);
+void reverse_flood_fill (Node * this_node, Stack * this_stack);
+
 
 
 // Maze Functions
