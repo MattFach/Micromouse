@@ -27,6 +27,8 @@ const int switch1 = 20, switch2 = 21, switch3 = 22, switch4 = 23, switch5 = 24; 
 
 const int R_fwd = 7, R_bkw = 6, L_fwd = 12, L_bkw = 13;  // (verify)  motor direction pins
 
+const int standby1 = 29;
+
 const int Kp = .85, Kd = 0;
 
 int R_enable_val = 33000;  // initialize enable values high
@@ -89,7 +91,10 @@ void setup()
   pinMode(R_bkw, OUTPUT);
   pinMode(L_fwd, OUTPUT);
   pinMode(L_bkw, OUTPUT);
+  pinMode(stadby1, OUTPUT);
   
+ digitalWrite(standby1, HIGH);
+ 
  
   pwmWrite(right_enable, R_enable_val);
   pwmWrite(left_enable, L_enable_val);
