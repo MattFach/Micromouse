@@ -31,8 +31,8 @@ const int standby1 = 29, standby2 = 28;
 
 //const int Kp = .85, Kd = 0;
 
-int R_enable_val = 16000;  // initialize enable values high
-int L_enable_val = 15000;
+int R_enable_val = 14000;  // initialize enable values high
+int L_enable_val = 13000;
 
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
@@ -110,9 +110,9 @@ void loop()
   
 
 
-//motor_test();
+motor_test();
 drive_straight();
-delay(100);
+//delay(100);
 //	turn_left();
 
 //	delay(2000);
@@ -255,7 +255,7 @@ void turn_left() // point turn
   pwmWrite(right_enable, 33000);  // decrese the value for a slower turn, increase it to go faster
   pwmWrite(left_enable, 33000);	  // decrese the value for a slower turn, increase it to go faster
   
-  delay(100);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
+  delay(200);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
   
   digitalWrite(R_fwd, HIGH);
@@ -360,7 +360,7 @@ void drive_straight() // use 4 sensors?
   static int previous_time = 0;
   bool good;
   int left90, left45, right45, right90;
-  double Kp = .5;
+  double Kp = .9, Kd = .1;
   
   if(previous_time)
   {
@@ -430,7 +430,7 @@ SerialUSB.print("   ");
   
   if(good)
   {
-    total = error * Kp; // + (error - previous_error) / (time_now - previous_time) * Kd;
+    total = error * Kp; // (error - previous_error) / (time_now - previous_time) * Kd;
   }
   
   else
@@ -444,23 +444,23 @@ SerialUSB.print("   ");
     
     L_enable_val -= (total);
 
-    if(L_enable_val < 10000)
+    if(L_enable_val < 7500)
     {
-      L_enable_val = 10000;
+      L_enable_val = 7500;
     }
-    else if(L_enable_val > 15000)
+    else if(L_enable_val > 13000)
     {
-      L_enable_val = 15000;
+      L_enable_val = 13000;
     }
    //   constrain(L_enable_val, 5000, 14000);  // may need to adjust
     
     R_enable_val += (total); 
     
-    if(R_enable_val < 10000)
+    if(R_enable_val < 9500)
     {
       R_enable_val = 10000;
     }
-    else if(L_enable_val > 15000)
+    else if(R_enable_val > 15000)
     {
       R_enable_val = 15000;
     }
