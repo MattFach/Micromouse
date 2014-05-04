@@ -456,9 +456,9 @@ SerialUSB.print("   ");
     
     R_enable_val += (total); 
     
-    if(R_enable_val < 9500)
+    if(R_enable_val < 12000)
     {
-      R_enable_val = 10000;
+      R_enable_val = 12000;
     }
     else if(R_enable_val > 15000)
     {
