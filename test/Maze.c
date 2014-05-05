@@ -123,7 +123,7 @@ int get_smallest_neighbor (Node * this_node) {
 		printf("In get_smallest_neighbor\n");
 
 	// The Node's floodval will be 1 higher than the neigboring cell
-	int smallestneighbor = 300;
+	int smallestneighbor = LARGEVAL;
 
 	// NOTE: LEFT, RIGHT, etc, are substituting:
 	// this_node->left, this_node->right, etc.
@@ -213,7 +213,29 @@ int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir) {
     	return preferred_dir;
 
     /* if there are multiple available paths, choose the favorable path */
+
+    else {
+
+    	if ((UP != NULL) && (UP->floodval == smallestval) && (UP->visited == FALSE))
+		   return NORTH;
+  		else if ((RIGHT != NULL) && (RIGHT->floodval == smallestval) && (RIGHT->visited == FALSE))
+    		return EAST;
+  		else if ((DOWN != NULL) && (DOWN->floodval == smallestval) && (DOWN->visited == FALSE))
+    		return SOUTH;
+  		else if ((LEFT != NULL) && (LEFT->floodval == smallestval) && (LEFT->visited == FALSE))
+    		return WEST;
+
+		if ((UP != NULL) && (UP->floodval == smallestval))
+		   return NORTH;
+  		else if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+    		return EAST;
+  		else if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+    		return SOUTH;
+  		else //if ((LEFT != NULL) && (LEFT->floodval) == smallestval)
+    		return WEST;
+	}
     
+    /*
     else {
 		if ((UP != NULL) && (UP->floodval == smallestval))
 		   return NORTH;
@@ -224,6 +246,7 @@ int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir) {
   		else //if ((LEFT != NULL) && (LEFT->floodval) == smallestval)
     		return WEST;
 	}
+	*/
 }
 
 
@@ -387,7 +410,7 @@ void print_map (const Maze * this_maze) {
 	printf("\n%s\n\n", "CURRENT MAP VALUES: ");
 	for (i = 0; i < SIZE; ++i) {
 		for (j = 0; j < SIZE; ++j) {
-			printf("%s%2d", "  ", MAPIJ->floodval);
+			printf("%s%3d", "  ", MAPIJ->floodval);
 		} 
 		printf("\n\n");
 	}

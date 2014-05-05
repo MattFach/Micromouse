@@ -134,6 +134,8 @@ void visit_Node (Maze * this_maze, Stack * this_stack, int x, int y,
     /* NOTE: the flag parameter determines wheter to update goal cells or not */
     flood_fill(this_node, this_stack, flag);
   }
+  
+  set_visited (this_node);
 
 }
 
@@ -282,7 +284,7 @@ int main (int argc, char ** argv) {
         printf("NEGATIVE COORD: ERROR\n");
         return FALSE;
       }
-      //press_enter_to_continue();
+      press_enter_to_continue();
     }
     goal_x = x;
     goal_y = y;
@@ -375,27 +377,9 @@ int main (int argc, char ** argv) {
 
     printf("cells have been reflooded from start...\n");
     print_map(my_maze);
-      press_enter_to_continue();
+    press_enter_to_continue();
 
-    /* Set everything to 255 ! */
-//    for (int i = 0; i < SIZE; i++) 
-//      for (int j = 0; j < SIZE; j++)
-//         my_maze->map[i][j]->floodval = LARGEVAL;
-    
-    /* set the start value to zero */
-//    set_value(my_maze->map[goal_x][goal_y], 0);
 
-    /* with start as zero, update everycell's floodval */
-//    push_open_neighbors(my_maze->map[goal_x][goal_y], my_stack);
-//    while(!is_empty_Stack(my_stack)) {
-//      pop(my_stack, &temp);
-//      if (!(temp->row == 15 && temp->column == 0))
-//        flood_fill(temp, my_stack, FALSE);
-//    }
-
-//    printf("cells have been reflooded from start, now reversed for another trip...\n");
-//    print_map(my_maze);
-//    press_enter_to_continue();
 
     /* prompt for another round of exploring the maze */
     printf("Round trip %d is complete... would you like to run another trip?\n", trip_count);
