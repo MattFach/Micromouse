@@ -46,6 +46,21 @@ void move_dir(Maze * this_maze, int * x, int * y, int * dir) {
   else if (next_dir == WEST) 
     (*y) = (*y) - 1;
 
+
+  if (this_node->traveled_to == TRUE && this_node->traced == TRUE) {
+
+    if ( (next_dir == NORTH && (*dir) == SOUTH) ||
+         (next_dir == SOUTH && (*dir) == NORTH) ||
+         (next_dir == EAST  && (*dir) == WEST)  ||
+         (next_dir == WEST  && (*dir) == EAST)  ) {
+
+        //this_node->traced = FALSE;
+        //(*num_steps)--;
+    } 
+
+  
+  }
+
   (*dir) = next_dir;
 
 
@@ -105,14 +120,23 @@ void visit_Node(Maze * this_maze, Stack * this_stack, int x, int y, int wallval,
     set_wall(this_maze, this_node, WEST, TRUE);
   }
 
-  if (!flag) {
+  if (!(this_node->traveled_to)) {
+    
+   // this_node->traveled_to = TRUE;
+   // this_node->traced = TRUE;
+   // (*num_steps)++;
+  
+  }
+  
+
+ // if (!flag) {
 
     push(this_stack, this_node);
     
     while (!is_empty_Stack(this_stack)) {
       pop(this_stack, &this_node);
-      flood_fill(this_node, this_stack);
-    }
+      flood_fill(this_node, this_stack, flag);
+ //   }
 
     
   }
@@ -155,9 +179,10 @@ int main (int argc, char ** argv) {
 	//int command;
 
   Stack * my_stack;
- //
-  //Node * temp;
-  int max_floodval;
+ 
+  Node * temp;
+ // int max_floodval;
+  int num_steps;
 
 	set_debug_off();
 
@@ -171,6 +196,8 @@ int main (int argc, char ** argv) {
 
   // Initialize new stack
   my_stack = new_Stack();
+
+  num_steps = 0;
 
 	
 	print_map(my_maze);
@@ -237,7 +264,7 @@ int main (int argc, char ** argv) {
 
   while (!found_goal) {
     printf("%d, %d\n", x, y);
-    visit_Node(my_maze, my_stack, x, y, Walls[x][y], 0);
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y],  0);
     move_dir(my_maze, &x, &y, &direction);
     printf("\nCurrent Location: %d,%d", x, y);
     print_map(my_maze);
@@ -253,9 +280,12 @@ int main (int argc, char ** argv) {
     //while(getchar() == 13);
     
   }
+  printf("%d\n", num_steps);
   printf("press enter to continue...\n");
     while(getchar() == 13);
     
+  visit_Node(my_maze, my_stack, x, y, Walls[x][y], 0);  
+
 
   /* read the walls around goal */
   
@@ -276,71 +306,39 @@ int main (int argc, char ** argv) {
     while(getchar() == 13);
   }
   
-  /* reset found_goal for returning to start */
-  found_goal = FALSE;
+  print_map(my_maze);
+  while(getchar() == 13);
 
-
-  
-  max_floodval = my_maze->map[15][0]->floodval;
-
-
-  /* Set all floodvals to reverse */
-  /*
-  for (int i = 0; i < SIZE; i++)
-    for (int j = 0; j < SIZE; j++) {
-
-      set_value(my_maze->map[i][j], max_floodval - my_maze->map[i][j]->floodval);
+  for (int i = 0; i < SIZE; i++) {
+   for (int j = 0; j < SIZE; j++){
+         my_maze->map[i][j]->floodval = 255;
     }
+  }
+
+  set_value(my_maze->map[15][0], 0);
+  print_map(my_maze);
+  while(getchar() == 13);
+
+
+
+  push_open_neighbors(my_maze->map[15][0], my_stack);
+  while(!is_empty_Stack(my_stack)) {
+
+    pop(my_stack, &temp);
+    if (!(temp->row == 15 && temp->column == 0))
+      flood_fill(temp, my_stack, TRUE);
+  }
+
 
   print_map(my_maze);
+
+  found_goal = FALSE;
    printf("press enter to continue...\n");
     while(getchar() == 13);
-  */
 
-
-  
-  /* set goal to 0, then reflood maze */
-  //set_value(my_maze->map[0][0)
-
-
- // set_value(my_maze->map[15][0], 0);
- //     while(getchar() == 13);
-
-/*
-  push_open_neighbors (my_maze->map[15][0], my_stack);
-  while (!is_empty_Stack(my_stack)) {
-    pop(my_stack, &temp);
-    //reverse_flood_fill(temp, my_stack);
-    flood_fill(temp, my_stack);
-  }
-
-  print_map(my_maze);
-
-  set_value(my_maze->map[8][7], 64);
-      while(getchar() == 13);
-  set_value(my_maze->map[7][7], 65);
-      while(getchar() == 13);
-  set_value(my_maze->map[7][8], 65);
-      while(getchar() == 13);
-  set_value(my_maze->map[8][7], 66);
-      while(getchar() == 13);
-  */
-
-  /*
-  push_open_neighbors (my_maze->map[8][7], my_stack);
-  while (!is_empty_Stack(my_stack)) {
-    pop(my_stack, &temp);
-    reverse_flood_fill(temp, my_stack);
-    //flood_fill(temp, my_stack);
-  }
-  */
-  
-  print_map(my_maze);
-
-/*
   while (!found_goal) {
     printf("%d, %d\n", x, y);
-    visit_Node(my_maze, my_stack, x, y, Walls[x][y]);
+    visit_Node(my_maze, my_stack, x, y, Walls[x][y], 0);
     move_dir(my_maze, &x, &y, &direction);
     printf("\nCurrent Location: %d,%d", x, y);
     print_map(my_maze);
@@ -353,10 +351,35 @@ int main (int argc, char ** argv) {
       printf("press enter to end simulation...\n");
     else
       printf("press enter to continue...\n");
-    while(getchar() == 13);
+   // while(getchar() == 13);
     
   }
-*/
+    while(getchar() == 13);
+
+
+  for (int i = 0; i < SIZE; i++) {
+    for (int j = 0; j < SIZE; j++){
+         my_maze->map[i][j]->floodval = 0;
+    }
+  }
+
+ // set_value(my_maze->map[15][0], 0);
+  print_map(my_maze);
+  while(getchar() == 13);
+
+
+
+  push_open_neighbors(my_maze->map[15][0], my_stack);
+  while(!is_empty_Stack(my_stack)) {
+
+    pop(my_stack, &temp);
+    if (!(temp->row == 15 && temp->column == 0))
+      flood_fill(temp, my_stack, TRUE);
+  }
+
+
+  print_map(my_maze);
+
 
   // Deallocate the Maze
   delete_Maze(&my_maze);
