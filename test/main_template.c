@@ -100,6 +100,7 @@ void setup()
  
   pwmWrite(right_enable, R_enable_val);
   pwmWrite(left_enable, L_enable_val);
+  
   //SerialUSB.println("hello world");
   
 }
@@ -199,8 +200,8 @@ void right_interrupt()
 
 void motor_test()  // motor testing function
 {
-  pwmWrite(right_enable, R_enable_val);
-  pwmWrite(left_enable, L_enable_val);
+  //pwmWrite(right_enable, R_enable_val);
+  //pwmWrite(left_enable, L_enable_val);
   
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
@@ -252,8 +253,8 @@ void turn_left() // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 33000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 33000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 17000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 15000);	  // decrese the value for a slower turn, increase it to go faster
   
   delay(200);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
@@ -262,7 +263,7 @@ void turn_left() // point turn
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(300);  // tune this value for complete turn ************* ///////////////////
+  delay(400);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -275,8 +276,8 @@ void turn_right()  // point turn
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 33000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 33000);   // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 17000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 15000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(100);
   
@@ -284,7 +285,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(300);  // tune this value for complete turn ******* ///////////////////
+  delay(400);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
@@ -360,7 +361,7 @@ void drive_straight() // use 4 sensors?
   static int previous_time = 0;
   bool good;
   int left90, left45, right45, right90;
-  double Kp = .9, Kd = .1;
+  double Kp = .85, Kd = .1;
   
   if(previous_time)
   {
@@ -444,25 +445,25 @@ SerialUSB.print("   ");
     
     L_enable_val -= (total);
 
-    if(L_enable_val < 7500)
-    {
-      L_enable_val = 7500;
-    }
-    else if(L_enable_val > 13000)
+    if(L_enable_val < 13000)
     {
       L_enable_val = 13000;
+    }
+    else if(L_enable_val > 16000)
+    {
+      L_enable_val = 16000;
     }
    //   constrain(L_enable_val, 5000, 14000);  // may need to adjust
     
     R_enable_val += (total); 
     
-    if(R_enable_val < 12000)
+    if(R_enable_val < 14000)
     {
-      R_enable_val = 12000;
+      R_enable_val = 14000;
     }
-    else if(R_enable_val > 15000)
+    else if(R_enable_val > 16000)
     {
-      R_enable_val = 15000;
+      R_enable_val = 16000;
     }
    //   constrain(R_enable_val, 5000, 15000);
       
