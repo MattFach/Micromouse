@@ -376,13 +376,13 @@ void drive_straight() // use 4 sensors?
   right90 = analogRead(R90sensor);
   //left45 = analogRead(sense_2);
  // right45 = analogRead(sense_3);
-  
+  /*
   SerialUSB.print(left90);
 SerialUSB.print("   ");
 SerialUSB.print(right90);
 SerialUSB.print("   ");
 
-    
+    */
   
   if(1)
   {
