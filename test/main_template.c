@@ -472,7 +472,7 @@ SerialUSB.print("   ");
     SerialUSB.print("   ");
     SerialUSB.print(R_enable_val);
     SerialUSB.print("   ");
-    SerialUSB.println(analogRead());
+    SerialUSB.println(analogRead(sense_3));
     previous_time = millis();
     }
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
