@@ -293,8 +293,8 @@ void about_face()  // because, why not?
   	digitalWrite(L_fwd, LOW);
   	digitalWrite(L_bkw, HIGH);
   	
-  	pwmWrite(R_enable_val, 15000)
-  	pwmWrite(L_enable_val, 15000)
+  	pwmWrite(R_enable_val, 15000);
+  	pwmWrite(L_enable_val, 15000);
   	
   	while(R_encode_val - value < 17);  // *********increase value to turn more***********
   	
