@@ -117,33 +117,27 @@ drive_straight();
 //	turn_left();
 
 //	delay(2000);
-	/*
 	
-	int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
+	
+	//int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
 				    // and right90 is pin 3
 				    // if this isn't true, change the pin declarations up top
 				    // (BOTH mine and James's)
 				    // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
 	
-	left = analogRead(sense_1);
-	right = analogRead(sense_5);
-	straight = analogRead(sense_3);
+	//left = analogRead(sense_1);
+	//right = analogRead(sense_5);
+	//straight = analogRead(sense_3);
 	
-	if(straight < 4000)     // if the mouse gets too close to the wall before turning, decrease the value
+	if(analogRead(sense_3) > 3000)     // if the mouse gets too close to the wall before turning, decrease the value
 	{			// if the mouse starts to turn before getting close enough, increase delay
 				// delay can be found in the next three if statements, all delay functions
 				// must have the same delqy value;
-		
-		digitalWrite(R_bkw, LOW);
-  		digitalWrite(L_bkw, LOW);
-		digitalWrite(R_fwd, HIGH);
-  		digitalWrite(L_fwd, HIGH);
-		
-		drive_straight();
+		about_face();
 		
 		
 	}
-	
+	/*
 	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
 	{			// if the mouse turns where it shouldnt, decrease the value (including below)
 		
@@ -292,12 +286,20 @@ void turn_right()  // point turn
 }
 
 
-void spin()  // because, why not?
+void about_face()  // because, why not?
 {
-  	while(1)
-  	{
-  		turn_left();
-  	}
+  	int value = R_encoder_value;
+  	
+  	digitalWrite(L_fwd, LOW);
+  	digitalWrite(L_bkw, HIGH);
+  	
+  	pwmWrite(R_enable_val, 15000)
+  	pwmWrite(L_enable_val, 15000)
+  	
+  	while(R_encode_value - value < 17);  // *********increase value to turn more***********
+  	
+  	digitalWrite(L_bkw, LOW);
+  	digitalWrite(L_fwd, HIGH);
 }
 
 void GoStraight()
@@ -363,15 +365,12 @@ void drive_straight() // use 4 sensors?
   int left90, left45, right45, right90;
   double Kp = .85, Kd = .1;
   
-  if(previous_time)
-  {
-    time_now = millis();
-   }
-  else
+  if(!previous_time)
   {
     previous_time = millis();
+   
     return;
-  }
+   }
   
   left90 = analogRead(L90sensor);  // verify sensor orientation
   right90 = analogRead(R90sensor);
@@ -467,12 +466,15 @@ SerialUSB.print("   ");
     }
    //   constrain(R_enable_val, 5000, 15000);
       
+    if(previous_time - millis() > 100)
+    {
     SerialUSB.print(L_enable_val);
     SerialUSB.print("   ");
     SerialUSB.print(R_enable_val);
     SerialUSB.print("   ");
-    SerialUSB.println(total);
-    
+    SerialUSB.println(analogRead());
+    previous_time = millis();
+    }
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
     analogWrite(right_enable, R_enable_val);    // different functions on maple
