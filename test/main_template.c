@@ -288,7 +288,7 @@ void turn_right()  // point turn
 
 void about_face()  // because, why not?
 {
-  	int value = R_encoder_value;
+  	int value = R_encoder_val;
   	
   	digitalWrite(L_fwd, LOW);
   	digitalWrite(L_bkw, HIGH);
@@ -296,7 +296,7 @@ void about_face()  // because, why not?
   	pwmWrite(R_enable_val, 15000)
   	pwmWrite(L_enable_val, 15000)
   	
-  	while(R_encode_value - value < 17);  // *********increase value to turn more***********
+  	while(R_encode_val - value < 17);  // *********increase value to turn more***********
   	
   	digitalWrite(L_bkw, LOW);
   	digitalWrite(L_fwd, HIGH);
