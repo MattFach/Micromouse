@@ -111,8 +111,8 @@ void loop()
   
 
 
-//motor_test();
-//drive_straight();
+motor_test();
+drive_straight();
 //delay(100);
 //	turn_left();
 
@@ -136,7 +136,7 @@ void loop()
 	{			// if the mouse starts to turn before getting close enough, increase delay
 				// delay can be found in the next three if statements, all delay functions
 				// must have the same delqy value;
-	while(analogRead(sense_3) > 1800);	
+	while(analogRead(sense_3) > 2000);	
             about_face();
 		
 		
