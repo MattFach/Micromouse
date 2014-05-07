@@ -136,11 +136,9 @@ drive_straight();
 	{			// if the mouse starts to turn before getting close enough, increase delay
 				// delay can be found in the next three if statements, all delay functions
 				// must have the same delqy value;
-	while(analogRead(sense_3) > 2000)
-	{
-		drive_straight();
-	}
-            about_face();
+	while(analogRead(sense_3) > 2000);
+
+	about_face();
 		
 		
 	}
