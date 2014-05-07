@@ -284,7 +284,7 @@ int main (int argc, char ** argv) {
         printf("NEGATIVE COORD: ERROR\n");
         return FALSE;
       }
-      press_enter_to_continue();
+      //press_enter_to_continue();
     }
     goal_x = x;
     goal_y = y;

@@ -208,13 +208,34 @@ int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir) {
     if (debug_on)
     	printf("pathcount: %d\n", pathcount);
 
+    switch (preferred_dir){
+
+    	case NORTH: 
+    		if ((UP != NULL) && (UP->floodval == smallestval))
+    			return NORTH;
+    		break;
+    	case EAST: 
+    		if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+    			return EAST;
+    		break;
+    	case SOUTH: 
+			if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+				return SOUTH;
+    		break;
+    	case WEST:  
+    		if ((LEFT != NULL) && (LEFT->floodval == smallestval))
+    			return WEST;
+    		break;
+
+    }
+
     /* if there is only one path, return that direction */
-    if (pathcount > 1)
-    	return preferred_dir;
+    //if (pathcount > 1)
+    //	return preferred_dir;
 
     /* if there are multiple available paths, choose the favorable path */
 
-    else {
+    //else {
 
     	if ((UP != NULL) && (UP->floodval == smallestval) && (UP->visited == FALSE))
 		   return NORTH;
@@ -233,7 +254,7 @@ int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir) {
     		return SOUTH;
   		else //if ((LEFT != NULL) && (LEFT->floodval) == smallestval)
     		return WEST;
-	}
+	//}
     
     /*
     else {
