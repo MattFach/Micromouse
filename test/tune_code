@@ -474,7 +474,7 @@ SerialUSB.print("   ");
     }
    //   constrain(R_enable_val, 5000, 15000);
    
-         
+     /*    
     if(previous_time - millis() > 100)
     {
     SerialUSB.print(L_enable_val);
@@ -484,7 +484,7 @@ SerialUSB.print("   ");
     SerialUSB.println(analogRead(sense_3));
     previous_time = millis();
     }
-
+*/
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
     analogWrite(right_enable, R_enable_val);    // different functions on maple
