@@ -23,6 +23,7 @@
 #define FLOODVAL this_node->floodval
 #define ROW this_node->row
 #define COL this_node->column
+#define VISITED this_node->visited
 #define LEFT this_node->left
 #define RIGHT this_node->right
 #define UP this_node->up
@@ -35,20 +36,25 @@
 #define STACK_OFFSET 3
 #define STACKSIZE 80
 
+// Solver Constants - will be used on mouse
+#define START_X 15
+#define START_Y 0
+#define LARGEVAL 301
+
+// Solver Constants - for command line simulation only
+#define NEWLINE 13
+#define YES 'y'
+#define NO 'n'
+
+
 
 typedef struct Node { 
 
-	/* data */
+	/* data fields */
 	int floodval;
-
-	//int distance;
-	//char section;
-
 	int row;
 	int column;
-
-	int traveled_to;
-	int traced;
+	int visited;
 
 	/* pointers to neighbors */
 	struct Node * left;
@@ -61,7 +67,6 @@ typedef struct Node {
 typedef struct Maze {
 
 	Node * map [SIZE][SIZE];	
-	int size;
 
 } Maze;
 
@@ -74,19 +79,19 @@ typedef struct Stack {
 
 
 // Node Functions
-struct Node * new_Node ();
+struct Node * new_Node (const int i, const int j);
 void delete_Node (Node ** npp);
-void flood_fill (Node * this_node, Stack * this_stack);
-void set_wall (Maze * this_maze, Node * this_node, int dir, int set_on);
-void set_value (Node * this_node, int value);
+void flood_fill (Node * this_node, Stack * this_stack, const int reflood_flag);
+void set_wall (Node * this_node, const int dir);
+void set_value (Node * this_node, const int value);
+void set_visited (Node * this_node);
+int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir);
 
 // Floodfill Helper Functions
 int get_smallest_neighbor (Node * this_node);
 int floodval_check(Node * this_node) ;
 void update_floodval (Node * this_node);
 void push_open_neighbors (Node * this_node, Stack * this_stack);
-// Used by Solver
-int get_smallest_neighbor_dir (Node * this_node, int preferred_dir);
 
 
 // Maze Functions
@@ -105,5 +110,6 @@ void push (Stack * this_stack, Node * this_node);
 // Debug On, Off
 void set_debug_on ();
 void set_debug_off ();
+int get_debug_mode ();
 
 
