@@ -4,7 +4,7 @@
 #include "Maze.h"
 
 /* update flag for whether goal cell was reached */
-void check_start_reached (int * x, int * y, int * found_start) {
+void check_start_reached (short * x, short * y, short * found_start) {
 
   if (*x == START_X && *y == START_Y) {
     *(found_start) = TRUE;
@@ -13,7 +13,7 @@ void check_start_reached (int * x, int * y, int * found_start) {
 }
 
 /* update flag for whether goal cell was reached */
-void check_goal_reached (int * x, int * y, int * found_goal) {
+void check_goal_reached (short * x, short * y, short * found_goal) {
 
   if (*x == SIZE / 2 || *x == SIZE / 2 - 1) {
     if (*y == SIZE / 2 || *y == SIZE / 2 - 1) {
@@ -25,13 +25,13 @@ void check_goal_reached (int * x, int * y, int * found_goal) {
 
 /* function for updating the location and direction of mouse 
    the actual "move" function */
-void move_dir (Maze * this_maze, int * x, int * y, int * dir) {
+void move_dir (Maze * this_maze, short * x, short * y, short * dir) {
 
   /* x, y are current positions, dir is current directions
      these output params may be updated at the exit of this function */ 
 
   Node * this_node;   /* the node at this position x, y */ 
-  int next_dir;       /* will hold the next direction to go */
+  short next_dir;       /* will hold the next direction to go */
 
   /* debug statements */
   if (get_debug_mode()) {
@@ -63,8 +63,8 @@ void move_dir (Maze * this_maze, int * x, int * y, int * dir) {
 
 /* the function that represents a visiting of a node 
    walls will be checked, and flood fill called apprepriately */
-void visit_Node (Maze * this_maze, Stack * this_stack, int x, int y, 
-                int wallval, int flag) {
+void visit_Node (Maze * this_maze, Stack * this_stack, short x, short y, 
+                short wallval, char flag) {
 
   Node * this_node;   /* holds current node at x, y; also for reading from stack */
   int northwall, eastwall, southwall, westwall;  /* for reading in wall data */
@@ -179,10 +179,10 @@ int main (int argc, char ** argv) {
      these are essential variables for solving the maze.. so will be used on mouse */
   Maze * my_maze;    /* maze for keeping track of flood values and walls */
   Stack * my_stack;  /* stack used for flood fill */
-  int found_dest;   /* flag if goal is reached */
-	int direction;    /* keeps track of direction that mouse is moving in */
-	int x, y; /* keeps track of current row, col value mouse is in within maze */
-  int goal_x, goal_y; /* keeps track of goal's x, y, once found */
+  short found_dest;   /* flag if goal is reached */
+	short direction;    /* keeps track of direction that mouse is moving in */
+	short x, y; /* keeps track of current row, col value mouse is in within maze */
+  short goal_x, goal_y; /* keeps track of goal's x, y, once found */
   Node * temp;  /* used for in-between start->goal, goal->start transition */
 
 

@@ -30,10 +30,9 @@
 #define DOWN this_node->down
 
 // Stack Constants
-#define SPI 2			// Stack Pointer Index
-#define SSI 1 			// Stack Size Index
-#define SCI 0			// Stack Counter Index.. Not used.
-#define STACK_OFFSET 3
+#define SPI 1			// Stack Pointer Index
+#define SSI 0 			// Stack Size Index
+#define STACK_OFFSET 2
 #define STACKSIZE 80
 
 // Solver Constants - will be used on mouse
@@ -51,10 +50,10 @@
 typedef struct Node { 
 
 	/* data fields */
-	int floodval;
-	int row;
-	int column;
-	int visited;
+	short floodval;
+	short row;
+	short column;
+	short visited;
 
 	/* pointers to neighbors */
 	struct Node * left;
@@ -72,24 +71,24 @@ typedef struct Maze {
 
 typedef struct Stack {
 
-	int properties [STACK_OFFSET];
+	short properties [STACK_OFFSET];
 	Node * the_stack [STACKSIZE];
 
 } Stack;
 
 
 // Node Functions
-struct Node * new_Node (const int i, const int j);
+struct Node * new_Node (const short i, const short j);
 void delete_Node (Node ** npp);
-void flood_fill (Node * this_node, Stack * this_stack, const int reflood_flag);
-void set_wall (Node * this_node, const int dir);
-void set_value (Node * this_node, const int value);
+void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag);
+void set_wall (Node * this_node, const short dir);
+void set_value (Node * this_node, const short value);
 void set_visited (Node * this_node);
-int get_smallest_neighbor_dir (Node * this_node, const int preferred_dir);
+short get_smallest_neighbor_dir (Node * this_node, const short preferred_dir);
 
 // Floodfill Helper Functions
-int get_smallest_neighbor (Node * this_node);
-int floodval_check(Node * this_node) ;
+short get_smallest_neighbor (Node * this_node);
+short floodval_check(Node * this_node) ;
 void update_floodval (Node * this_node);
 void push_open_neighbors (Node * this_node, Stack * this_stack);
 

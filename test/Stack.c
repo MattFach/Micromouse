@@ -10,7 +10,6 @@ Stack * new_Stack() {
 
 	this_stack->properties[SPI] = 0;
 	this_stack->properties[SSI] = STACKSIZE;
-	this_stack->properties[SCI] = 1;
 
 	return this_stack;
 }
@@ -44,7 +43,7 @@ int is_empty_Stack (Stack * this_stack) {
 void pop (Stack * this_stack, Node ** npp) {
 
 
-	int index;
+	short index;
 
 	index = this_stack->properties[SPI] - 1;
 
@@ -57,7 +56,7 @@ void pop (Stack * this_stack, Node ** npp) {
 // Pushes an element to the top of this_stack
 void push (Stack * this_stack, Node * this_node) {
 
-	int index;
+	short index;
 
 	index = this_stack->properties[SPI];
 

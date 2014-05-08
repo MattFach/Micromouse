@@ -1,9 +1,113 @@
-// COMMENT
+/*
+ * Main Template
+ *
+ */
+#include <stdlib.h>
 
-//CHECKING IF THE BRANCHING IS WORKING>
+// Constants
 
-// MATT!!  read the turn_left and turn_right functions to figure out what you need to tune
-// MATT!!  also read the loop to find values that need tuning
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#define SIZE 16     // Size of one dimention of Map
+
+
+// Directions
+#define NORTH 0
+#define EAST 1
+#define SOUTH 2
+#define WEST 3
+
+// Shortcut Constants
+#define MAPIJ this_maze->map[i][j]
+#define MAP this_maze->map
+#define FLOODVAL this_node->floodval
+#define ROW this_node->row
+#define COL this_node->column
+#define VISITED this_node->visited
+#define LEFT this_node->left
+#define RIGHT this_node->right
+#define UP this_node->up
+#define DOWN this_node->down
+
+// Stack Constants
+#define SPI 1     // Stack Pointer Index
+#define SSI 0       // Stack Size Index
+#define STACK_OFFSET 2  // Size of Stack's property Array
+#define STACKSIZE 80
+
+// Solver Constants - will be used on mouse
+#define START_X 15
+#define START_Y 0
+#define LARGEVAL 301
+
+
+
+/*** Struct Definition and Functions ***/
+
+/* Node Struct */
+typedef struct Node { 
+
+  /* data fields */
+  short floodval;
+  short row;
+  short column;
+  short visited;
+
+  /* pointers to neighbors */
+  struct Node * left;
+  struct Node * right;
+  struct Node * up;
+  struct Node * down;
+  
+} Node;
+
+/* Node Functions */
+struct Node * new_Node (const short i, const short j);
+void delete_Node (Node ** npp);
+void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag);
+void set_wall (Node * this_node, const short dir);
+void set_value (Node * this_node, const short value);
+void set_visited (Node * this_node);
+short get_smallest_neighbor_dir (Node * this_node, const short preferred_dir);
+
+
+/* Maze Struct */
+typedef struct Maze {
+
+  Node * map [SIZE][SIZE];  
+
+} Maze;
+
+/* Maze Constructor, Destructor */
+struct Maze * new_Maze ();
+void delete_Maze (Maze ** mpp);
+
+
+/* Stack Struct */
+typedef struct Stack {
+
+  short properties [STACK_OFFSET];
+  Node * the_stack [STACKSIZE];
+
+} Stack;
+
+/* Stack Functions */
+Stack * new_Stack();
+void delete_Stack (Stack ** spp);
+int is_empty_Stack (Stack * this_stack);
+void pop (Stack * this_stack, Node ** npp);
+void push (Stack * this_stack, Node * this_node);
+
+
+
+/*** Maple Pins Constants ***/
+
 
 const int L90sensor = 3;   //  James's pin declarations
 const int R90sensor = 8;
@@ -11,7 +115,6 @@ const int L45sensor = 4;
 const int R45sensor = 9;
 const int LeftMotor = 11;
 const int RightMotor = 10;
-
 
 const int sense_1 = 3, sense_2 = 4, sense_3 = 5, sense_4 = 9, sense_5 = 8;  // IR sensor pins
 
@@ -37,25 +140,20 @@ int L_enable_val = 13000;
 volatile int R_encoder_val = 0;  // declare encoder interrupt values
 volatile int L_encoder_val = 0;
 
-typedef struct node
-  {
-  short int distance;
-  char section;
-  
-  short int row;
-  short int column;
 
-  bool traveled_to;
 
-  bool up;
-  bool down;
-  bool left;
-  bool right;
-  
-  struct node* linked_to;
-  };
+/* Solver variables */
+Maze * my_maze;    /* maze for keeping track of flood values and walls */
+Stack * my_stack;  /* stack used for flood fill */
+Node * temp;  /* used for in-between start->goal, goal->start transition */
+short found_dest;   /* flag if goal is reached */
+short direction;    /* keeps track of direction that mouse is moving in */
+short x, y; /* keeps track of current row, col value mouse is in within maze */
+short goal_x, goal_y; /* keeps track of goal's x, y, once found */
 
-  struct node maze[16][16];
+
+
+/*** Setup ***/
 
 
 void setup()
@@ -94,14 +192,23 @@ void setup()
   pinMode(standby1, OUTPUT);
   pinMode(standby2, OUTPUT);
   
- digitalWrite(standby1, HIGH);
- digitalWrite(standby2, HIGH);
- 
+  digitalWrite(standby1, HIGH);
+  digitalWrite(standby2, HIGH);
  
   pwmWrite(right_enable, R_enable_val);
   pwmWrite(left_enable, L_enable_val);
   
-  //SerialUSB.println("hello world");
+
+  /* allocating maze solving resources */
+  my_maze = new_Maze();    /* Initialize new maze */
+  my_stack = new_Stack();  /* Initialize new stack */
+  
+  /* Initialize variables */
+  x = START_X;
+  y = START_Y;
+  direction = NORTH;
+  found_dest = FALSE;
+  exit_solver_loop = FALSE;
   
 }
 
@@ -111,12 +218,12 @@ void loop()
   
 
 
-motor_test();
-drive_straight();
-//delay(100);
-//	turn_left();
+  motor_test();
+  drive_straight();
+  //delay(100);
+  //	turn_left();
 
-//	delay(2000);
+  //	delay(2000);
 	
 	
 	//int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
@@ -480,3 +587,461 @@ SerialUSB.print("   ");
     analogWrite(right_enable, R_enable_val);    // different functions on maple
   }
 }
+
+
+
+
+
+/*** Maze and Node "Constructors" ***/
+
+/* Node Constructor */
+Node * new_Node (const short i, const short j) {
+
+  Node * this_node;
+  short halfsize;
+
+  if (debug_on)
+    printf("allocating %hd, %hd\n", i, j);
+
+  this_node = (Node *) malloc(sizeof(Node));
+  halfsize = SIZE / 2;
+
+  ROW = i;
+  COL = j;
+  VISITED = FALSE;
+
+  /* Initializing the flood value at this coord
+     NOTE : Right now this only works when SIZE is even -- which is ok */
+  if (i < halfsize && j < halfsize)
+    FLOODVAL = (halfsize - 1 - i) + (halfsize - 1 - j) ;
+      
+  else if (i < halfsize && j >= halfsize)
+    FLOODVAL = (halfsize - 1 - i) + (j - halfsize) ;
+      
+  else if (i >= halfsize && j < halfsize)
+    FLOODVAL = (i - halfsize) + (halfsize - 1 - j) ;
+
+  else
+    FLOODVAL = (i - halfsize) + (j - halfsize) ;
+
+  return this_node;
+}
+
+/* Maze Constructor */
+Maze * new_Maze () {
+
+  Maze * this_maze;
+  short i, j;
+  
+  this_maze = (Maze *) malloc(sizeof(Maze));
+
+  /* Allocate a new Node for each coord of maze */
+  for (i = 0; i < SIZE; ++i) 
+    for (j = 0; j < SIZE; ++j) 
+      MAPIJ = new_Node (i, j);
+
+  /* setting the neighbors ptrs... must be done after all cells allocated */
+  for (i = 0; i < SIZE; i++)
+    for (j = 0; j < SIZE; j++) {
+      MAPIJ->left = (j == 0) ? NULL : (this_maze->map[i][j-1]);
+      MAPIJ->right = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
+      MAPIJ->up = (i == 0) ? NULL : (this_maze->map[i-1][j]);
+      MAPIJ->down = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
+    }
+
+  return this_maze;
+}
+
+/* Node Destructor */
+void delete_Node (Node ** npp) {
+  
+  /* debug statements */
+  //if (debug_on) 
+  //  printf("deallocating %d, %d\n", (*npp)->row, (*npp)->column);
+
+  free (*npp);
+  *npp = 0;
+}
+
+/* Maze Destructor */
+void delete_Maze (Maze ** mpp) {
+
+  short i, j;
+
+  for (i = 0; i < SIZE; i++) 
+    for (j = 0; j < SIZE; j++) 
+      delete_Node (&((*mpp)->map[i][j])); 
+    
+  free(*mpp);
+  *mpp = 0;
+}
+
+
+
+
+
+/*** Node Functions start here ***/
+
+/* function for obtaining this_node's smallest neighbor's floodval */
+short get_smallest_neighbor (Node * this_node) {
+
+  /* debug statements */
+  //if (debug_on)
+  //  printf("In get_smallest_neighbor\n");
+
+  // The Node's floodval will be 1 higher than the neigboring cell
+  short smallestneighbor = LARGEVAL;
+
+  // NOTE: LEFT, RIGHT, etc, are substituting:
+  // this_node->left, this_node->right, etc.
+
+  if (LEFT != NULL && (LEFT->right != NULL) && (LEFT->floodval) < smallestneighbor)
+    smallestneighbor = LEFT->floodval;
+
+  if (RIGHT != NULL && (RIGHT->left != NULL) && (RIGHT->floodval) < smallestneighbor)
+    smallestneighbor = RIGHT->floodval; 
+
+  if (UP != NULL && (UP->down != NULL) && (UP->floodval) < smallestneighbor)
+    smallestneighbor = UP->floodval;
+
+  if (DOWN != NULL && (DOWN->up != NULL) && (DOWN->floodval) < smallestneighbor)
+    smallestneighbor = DOWN->floodval;
+
+  return smallestneighbor;
+}
+
+
+
+/* function for obtaining this nodes's smallest neighbor's direction */
+short get_smallest_neighbor_dir (Node * this_node, const short preferred_dir) {
+
+  short smallestval;    /* smallest neighbor value */
+  short pathcount;      /* number of available paths */
+
+  /* debug statement */
+  //if (debug_on)
+  //  printf("In get_smallest_neighbor_dir\n");
+
+  /* get the smallest neighboring flood_val */
+  smallestval = get_smallest_neighbor(this_node);
+  
+  /* clear pathcount */
+  pathcount = 0;
+
+  /* A BUNCH OF DEBUG STATEMENTS! */
+  /*
+  if (debug_on) {
+      printf("preferred_dir: %hd\n", preferred_dir);
+      printf("smallestval: %hd\n", smallestval);
+      printf("neighboring floodvals:\n");
+      if (UP != NULL) {
+        printf("UP: %hd\n", UP->floodval);
+        if (UP->floodval == smallestval)
+          printf("NORTH cell reachable\n");
+      }
+      if (RIGHT != NULL)
+      {
+        printf("RIGHT: %hd\n", RIGHT->floodval);
+        if (RIGHT->floodval == smallestval)
+          printf("EAST cell reachable\n");
+      }
+      if (DOWN != NULL)
+      {
+        printf("DOWN: %hd\n", DOWN->floodval);
+        if (DOWN->floodval == smallestval)
+          printf("SOUTH cell reachable\n");
+      }
+      if (LEFT != NULL)
+      {
+        printf("LEFT: %hd\n", LEFT->floodval);
+        if (LEFT->floodval == smallestval)
+          printf("WEST cell reachable\n");
+    }
+  }
+  */
+
+    /* count the number of available paths */
+  if ((UP != NULL) && (UP->floodval == smallestval)) 
+      pathcount++;
+    
+    if ((RIGHT != NULL) && (RIGHT->floodval == smallestval)) 
+      pathcount++;
+    
+    if ((DOWN != NULL) && (DOWN->floodval == smallestval)) 
+      pathcount++;
+    
+    if ((LEFT != NULL) && (LEFT->floodval == smallestval)) 
+      pathcount++;
+
+  /* more debug statments */
+  //  if (debug_on)
+  //    printf("pathcount: %d\n", pathcount);
+
+    switch (preferred_dir){
+
+      case NORTH: 
+        if ((UP != NULL) && (UP->floodval == smallestval))
+          return NORTH;
+        break;
+      case EAST: 
+        if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+          return EAST;
+        break;
+      case SOUTH: 
+      if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+        return SOUTH;
+        break;
+      case WEST:  
+        if ((LEFT != NULL) && (LEFT->floodval == smallestval))
+          return WEST;
+        break;
+
+    }
+
+    /* if there is only one path, return that direction */
+    //if (pathcount > 1)
+    //  return preferred_dir;
+
+    /* if there are multiple available paths, choose the favorable path */
+
+
+      if ((UP != NULL) && (UP->floodval == smallestval) && (UP->visited == FALSE))
+       return NORTH;
+      else if ((RIGHT != NULL) && (RIGHT->floodval == smallestval) && (RIGHT->visited == FALSE))
+        return EAST;
+      else if ((DOWN != NULL) && (DOWN->floodval == smallestval) && (DOWN->visited == FALSE))
+        return SOUTH;
+      else if ((LEFT != NULL) && (LEFT->floodval == smallestval) && (LEFT->visited == FALSE))
+        return WEST;
+
+    if ((UP != NULL) && (UP->floodval == smallestval))
+       return NORTH;
+      else if ((RIGHT != NULL) && (RIGHT->floodval == smallestval))
+        return EAST;
+      else if ((DOWN != NULL) && (DOWN->floodval == smallestval))
+        return SOUTH;
+      else //if ((LEFT != NULL) && (LEFT->floodval) == smallestval)
+        return WEST;
+
+}
+
+
+/* helper function for flood_fill 
+   checks if this node already fulfills flood value requirements*/
+short floodval_check(Node * this_node) {
+
+  /* debug statments */
+  //if (debug_on)
+  //  printf("In floodval_check\n");
+
+  /* return a flag determining wheter this node should be updated 
+     aka, is this Node 1 + min open adj cell? */
+  if (get_smallest_neighbor (this_node) + 1 == this_node->floodval)
+    return TRUE;
+
+  return FALSE;
+}
+
+
+/* helper fuction for flood_fill 
+   updates this node's flood value to 1 greater than the smallest neighbor*/
+void update_floodval (Node * this_node) {
+
+  /* debug statements */
+  //if (debug_on)
+  //  printf("In update_floodval\n");
+
+  /* set this node's value to 1 + min open adjascent cell */
+  this_node->floodval = get_smallest_neighbor (this_node) + 1;
+
+}
+
+/* pushes the open neighboring cells of this node to the stack */
+void push_open_neighbors (Node * this_node, Stack * this_stack) {
+
+  /* debug statements */
+  //if (debug_on)
+  //  printf("In push_open_neighbors\n");
+
+  /* A NULL neighbor represents a wall.
+     if neighbor is accessible, push it onto stack! */
+  if (LEFT != NULL && LEFT->right != NULL) 
+    push (this_stack, LEFT);
+
+  if (RIGHT != NULL && RIGHT->left != NULL) 
+    push (this_stack, RIGHT);
+
+  if (UP != NULL && UP->down != NULL) 
+    push (this_stack, UP);
+
+  if (DOWN != NULL && DOWN->up != NULL) 
+    push (this_stack, DOWN);
+
+}
+
+/* main function for updating the flood values of this node */
+void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag) {
+
+  short status;  /* Flag for updating the flood value or not */
+
+  /* debug statements */
+  //if (debug_on)
+  //  printf("In flood_fill (%d, %d) \n", this_node->row, this_node->column);
+  
+  /* we want to avoid flooding the goal values - this is for non-reverse */
+  if (!reflood_flag) 
+    if (ROW == SIZE / 2 || ROW == SIZE / 2 - 1) 
+        if (COL == SIZE / 2 || COL == SIZE / 2 - 1) 
+          return;
+
+    /* we want to avoid flooding the goal values - this is reverse */
+  if (reflood_flag) 
+    if (ROW == START_X && COL == START_Y)
+        return;
+  
+  /* is the cell (1 + minumum OPEN adjascent cell) ? */
+  status = floodval_check (this_node);
+
+  /* if no, update curent cell's flood values, 
+     then push open adjascent neighbors to stack. */
+  if (!status) {
+    update_floodval(this_node); /* Update floodval to 1 + min open neighbor */
+    push_open_neighbors(this_node, this_stack); /* pushed, to be called later */
+  }
+  
+  /* debug statements */
+  //if (debug_on)
+  //  printf ("Exiting flood_fill (%d, %d)\n", this_node->row, this_node->column);
+  
+}
+
+/* Function for setting this node's floodval to a specific value */
+void set_value (Node * this_node, const short value) {
+
+  /* debug statements */
+  //if (debug_on) {
+  //  printf("In set_value\n");
+  //  printf("Floodval set to : %d\n", FLOODVAL);
+  //}
+  
+  /* set the flood value to specified value */
+  FLOODVAL = value;
+}
+
+/* Function for setting this node's floodval to a specific value */
+void set_visited (Node * this_node) {
+
+  /* debug statements */
+  //if (debug_on) 
+  //  printf("In set_visited\n");
+
+  /* set the flood value to specified value */
+  VISITED = TRUE;
+}
+
+/* Function for setting the walls of this node */
+void set_wall (Node * this_node, const short dir) {
+
+  /* set a wall, of this node, of the specified direction  */
+  switch (dir) {
+
+    case NORTH :
+      if (ROW != 0) {
+        UP = NULL;
+        //if (debug_on)
+        //  printf("NORTH Wall Set\n");
+      } break;
+
+    case SOUTH :
+      if (ROW != SIZE -1) {
+        DOWN = NULL;
+        //if (debug_on)
+        //  printf("SOUTH Wall Set\n");
+        
+      } break; 
+
+    case EAST : 
+      if (COL != SIZE - 1) {
+        RIGHT = NULL;
+        //if (debug_on)   
+        //  printf("EAST Wall Set\n");
+      } break;
+
+    case WEST :
+      if (COL != 0) { 
+        LEFT = NULL;
+        //if (debug_on)
+        //  printf("WEST Wall Set\n");
+      } break;
+  }
+}
+
+
+
+/*** Solver Functions start here ***/
+
+
+
+
+
+
+/* update flag for whether goal cell was reached */
+void check_start_reached (short * x, short * y, short * found_start) {
+
+  if (*x == START_X && *y == START_Y) {
+    *(found_start) = TRUE;
+    //printf("Start Coorinates Reached: %d, %d\n", *x, *y);
+  }
+}
+
+/* update flag for whether goal cell was reached */
+void check_goal_reached (short * x, short * y, short * found_goal) {
+
+  if (*x == SIZE / 2 || *x == SIZE / 2 - 1) {
+    if (*y == SIZE / 2 || *y == SIZE / 2 - 1) {
+      *(found_goal) = TRUE;
+      //printf("Goal Coordinates Reached: %d, %d\n", *x, *y); 
+    }
+  }
+}
+
+/* function for updating the location and direction of mouse 
+   the actual "move" function */
+void move_dir (Maze * this_maze, short * x, short * y, short * dir) {
+
+  /* x, y are current positions, dir is current directions
+     these output params may be updated at the exit of this function */ 
+
+  Node * this_node;   /* the node at this position x, y */ 
+  short next_dir;       /* will hold the next direction to go */
+
+  /* debug statements */
+  //if (get_debug_mode()) {
+  //  printf("In move_dir\n");
+  //  printf("preffered_dir: %d\n", *dir );
+  //  printf("current coords: %d,%d\n", *x, *y);
+  //}
+
+  this_node = this_maze->map[(*x)][(*y)];
+  next_dir = get_smallest_neighbor_dir(this_node, *dir);
+  
+  //if (get_debug_mode())
+  //  printf("%d\n", next_dir);
+
+  /* update the appropriate location value x or y */
+  if (next_dir == NORTH) 
+    (*x) = (*x) - 1;
+  else if (next_dir == EAST) 
+    (*y) = (*y) + 1;
+  else if (next_dir == SOUTH) 
+    (*x) = (*x) + 1;
+  else if (next_dir == WEST) 
+    (*y) = (*y) - 1;
+
+  /* update the direction */
+  (*dir) = next_dir;
+}
+
+
+
+
