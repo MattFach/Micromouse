@@ -6,7 +6,7 @@
 // Stack Constructor
 Stack * new_Stack() {
 
-	Stack * this_stack = malloc(sizeof(Stack));
+	Stack * this_stack = (Stack *) malloc(sizeof(Stack));
 
 	this_stack->properties[SPI] = 0;
 	this_stack->properties[SSI] = STACKSIZE;

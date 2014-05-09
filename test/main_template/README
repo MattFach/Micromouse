@@ -1,0 +1,4 @@
+How to compile sketch with header file, in Maple IDE:
+
+Have copy of main_template, open on window, then use the menu item Sketch > Add files, to add
+any necessary header files, c files.

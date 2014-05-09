@@ -3,6 +3,9 @@
  *
  */
 #include <stdlib.h>
+#include "Maze.h"
+#include "Maze.c"
+#include "Stack.c"
 
 
 /*** Maple Pins Constants ***/
@@ -486,6 +489,7 @@ SerialUSB.print("   ");
     analogWrite(right_enable, R_enable_val);    // different functions on maple
   }
 }
+
 
 
 

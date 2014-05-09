@@ -1,5 +1,9 @@
 // Constants
 
+#ifndef Maze_h
+#define Maze_h
+
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -78,7 +82,7 @@ typedef struct Stack {
 
 
 // Node Functions
-struct Node * new_Node (const short i, const short j);
+Node * new_Node (const short i, const short j);
 void delete_Node (Node ** npp);
 void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag);
 void set_wall (Node * this_node, const short dir);
@@ -94,7 +98,7 @@ void push_open_neighbors (Node * this_node, Stack * this_stack);
 
 
 // Maze Functions
-struct Maze * new_Maze ();
+Maze * new_Maze ();
 void delete_Maze (Maze ** mpp);
 void print_map (const Maze * this_maze);
 
@@ -111,4 +115,4 @@ void set_debug_on ();
 void set_debug_off ();
 int get_debug_mode ();
 
-
+#endif
