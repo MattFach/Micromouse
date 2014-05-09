@@ -24,12 +24,12 @@
 #define WEST 3
 
 // Shortcut Constants
-//#define MAPIJ this_maze->map[i][j]
-//#define MAP this_maze->map
-//define FLOODVAL this_node->floodval
-//#define ROW this_node->row
-//#define COL this_node->column
-//#define VISITED this_node->visited
+#define MAPIJ this_maze->map[i][j]
+#define MAP this_maze->map
+#define FLOODVAL this_node->floodval
+#define ROW this_node->row
+#define COL this_node->column
+#define VISITED this_node->visited
 #define LEFT this_node->left
 #define RIGHT this_node->right
 #define UP this_node->up
@@ -67,12 +67,26 @@ typedef struct Node {
   
 } Node;
 
+/* Node Functions */
+struct Node * new_Node (const short i, const short j);
+void delete_Node (Node ** npp);
+void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag);
+void set_wall (Node * this_node, const short dir);
+void set_value (Node * this_node, const short value);
+void set_visited (Node * this_node);
+short get_smallest_neighbor_dir (Node * this_node, const short preferred_dir);
+
+
 /* Maze Struct */
 typedef struct Maze {
 
   Node * map [SIZE][SIZE];  
 
 } Maze;
+
+/* Maze Constructor, Destructor */
+struct Maze * new_Maze ();
+void delete_Maze (Maze ** mpp);
 
 
 /* Stack Struct */
@@ -83,18 +97,7 @@ typedef struct Stack {
 
 } Stack;
 
-
-struct Node * new_Node (const short i, const short j);
-void delete_Node (Node ** npp);
-void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag);
-void set_wall (Node * this_node, const short dir);
-void set_value (Node * this_node, const short value);
-void set_visited (Node * this_node);
-short get_smallest_neighbor_dir (Node * this_node, const short preferred_dir);
-
-struct Maze * new_Maze ();
-void delete_Maze (Maze ** mpp);
-
+/* Stack Functions */
 Stack * new_Stack();
 void delete_Stack (Stack ** spp);
 int is_empty_Stack (Stack * this_stack);
@@ -197,8 +200,8 @@ void setup()
   
 
   /* allocating maze solving resources */
-  my_maze = (Maze *) new_Maze();    /* Initialize new maze */
-  my_stack = (Stack *) new_Stack();  /* Initialize new stack */
+  my_maze = new_Maze();    /* Initialize new maze */
+  my_stack = new_Stack();  /* Initialize new stack */
   
   /* Initialize variables */
   x = START_X;
@@ -283,53 +286,8 @@ void loop()
   */
   
   
+  
 }
-/*** End of void loop() ***/
-
-
-void solver() {
-
-  while (!exit_solver_loop) {
-
-    found_dest = FALSE;
-    direction = NORTH;
-
-    /* Forward trip: start -> goal */
-    while (!found_dest) {
-
-      // visit_node()
-      move_dir(my_maze, &x, &y, &direction);
-      check_goal_reached(&x, &y, &found_dest);
-
-
-    }
-
-    /* Once goal is reached, save the location */
-    goal_x = x;
-    goal_y = y;
-
-  }
-
-  /*** Reading the walls of the CENTER GOAL CELLS ***/  
-    for (short i = 0; i < 4; i++) {
-      //visit_Node(my_maze, my_stack, x, y, Walls[x][y], FALSE);  
-      /*
-      if ( x == SIZE / 2 - 1 && y == SIZE / 2 - 1 )
-        x++;
-      else if ( x == SIZE / 2 && y == SIZE / 2 - 1 ) 
-        y++;
-      else if ( x == SIZE / 2 && y == SIZE / 2 ) 
-        x--;
-      else 
-        y--;
-      */
-    }
-
-
-}
-
-
-
 
 void left_interrupt()
 {
@@ -648,23 +606,23 @@ Node * new_Node (const short i, const short j) {
   this_node = (Node *) malloc(sizeof(Node));
   halfsize = SIZE / 2;
 
-  this_node->row = i;
-  this_node->column = j;
-  this_node->visited = FALSE;
+  ROW = i;
+  COL = j;
+  VISITED = FALSE;
 
   /* Initializing the flood value at this coord
      NOTE : Right now this only works when SIZE is even -- which is ok */
   if (i < halfsize && j < halfsize)
-    this_node->floodval = (halfsize - 1 - i) + (halfsize - 1 - j) ;
+    FLOODVAL = (halfsize - 1 - i) + (halfsize - 1 - j) ;
       
   else if (i < halfsize && j >= halfsize)
-    this_node->floodval = (halfsize - 1 - i) + (j - halfsize) ;
+    FLOODVAL = (halfsize - 1 - i) + (j - halfsize) ;
       
   else if (i >= halfsize && j < halfsize)
-    this_node->floodval = (i - halfsize) + (halfsize - 1 - j) ;
+    FLOODVAL = (i - halfsize) + (halfsize - 1 - j) ;
 
   else
-    this_node->floodval = (i - halfsize) + (j - halfsize) ;
+    FLOODVAL = (i - halfsize) + (j - halfsize) ;
 
   return this_node;
 }
@@ -680,15 +638,15 @@ Maze * new_Maze () {
   /* Allocate a new Node for each coord of maze */
   for (i = 0; i < SIZE; ++i) 
     for (j = 0; j < SIZE; ++j) 
-      this_maze->map[i][j] = (Node *) new_Node (i, j);
+      MAPIJ = new_Node (i, j);
 
   /* setting the neighbors ptrs... must be done after all cells allocated */
   for (i = 0; i < SIZE; i++)
     for (j = 0; j < SIZE; j++) {
-      this_maze->map[i][j]->left = (j == 0) ? NULL : (this_maze->map[i][j-1]);
-      this_maze->map[i][j]->right = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
-      this_maze->map[i][j]->up = (i == 0) ? NULL : (this_maze->map[i-1][j]);
-      this_maze->map[i][j]->down = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
+      MAPIJ->left = (j == 0) ? NULL : (this_maze->map[i][j-1]);
+      MAPIJ->right = (j == SIZE-1) ? NULL : (this_maze->map[i][j+1]);
+      MAPIJ->up = (i == 0) ? NULL : (this_maze->map[i-1][j]);
+      MAPIJ->down = (i == SIZE-1) ? NULL : (this_maze->map[i+1][j]);
     }
 
   return this_maze;
@@ -718,29 +676,6 @@ void delete_Maze (Maze ** mpp) {
   *mpp = 0;
 }
 
-// Stack Constructor
-Stack * new_Stack() {
-
-  Stack * this_stack = malloc(sizeof(Stack));
-
-  this_stack->properties[SPI] = 0;
-  this_stack->properties[SSI] = STACKSIZE;
-
-  return this_stack;
-}
-
-// Stack Destructor
-void delete_Stack (Stack ** spp) {
-
-  if (spp == 0 || *spp == 0) {
-    //fprintf(stderr, "NULL POINTER\n");
-    return;
-  }
-
-  free(*spp);
-
-  *spp = 0;
-}
 
 
 
@@ -955,13 +890,13 @@ void flood_fill (Node * this_node, Stack * this_stack, const short reflood_flag)
   
   /* we want to avoid flooding the goal values - this is for non-reverse */
   if (!reflood_flag) 
-    if (this_node->row == SIZE / 2 || this_node->row == SIZE / 2 - 1) 
-        if (this_node->column == SIZE / 2 || this_node->column == SIZE / 2 - 1) 
+    if (ROW == SIZE / 2 || ROW == SIZE / 2 - 1) 
+        if (COL == SIZE / 2 || COL == SIZE / 2 - 1) 
           return;
 
     /* we want to avoid flooding the goal values - this is reverse */
   if (reflood_flag) 
-    if (this_node->row == START_X && this_node->column == START_Y)
+    if (ROW == START_X && COL == START_Y)
         return;
   
   /* is the cell (1 + minumum OPEN adjascent cell) ? */
@@ -986,11 +921,11 @@ void set_value (Node * this_node, const short value) {
   /* debug statements */
   //if (debug_on) {
   //  printf("In set_value\n");
-  //  printf("Floodval set to : %d\n", this_node->floodval);
+  //  printf("Floodval set to : %d\n", FLOODVAL);
   //}
   
   /* set the flood value to specified value */
-  this_node->floodval = value;
+  FLOODVAL = value;
 }
 
 /* Function for setting this node's floodval to a specific value */
@@ -1001,7 +936,7 @@ void set_visited (Node * this_node) {
   //  printf("In set_visited\n");
 
   /* set the flood value to specified value */
-  this_node->visited = TRUE;
+  VISITED = TRUE;
 }
 
 /* Function for setting the walls of this node */
@@ -1011,14 +946,14 @@ void set_wall (Node * this_node, const short dir) {
   switch (dir) {
 
     case NORTH :
-      if (this_node->row != 0) {
+      if (ROW != 0) {
         UP = NULL;
         //if (debug_on)
         //  printf("NORTH Wall Set\n");
       } break;
 
     case SOUTH :
-      if (this_node->row != SIZE -1) {
+      if (ROW != SIZE -1) {
         DOWN = NULL;
         //if (debug_on)
         //  printf("SOUTH Wall Set\n");
@@ -1026,14 +961,14 @@ void set_wall (Node * this_node, const short dir) {
       } break; 
 
     case EAST : 
-      if (this_node->column != SIZE - 1) {
+      if (COL != SIZE - 1) {
         RIGHT = NULL;
         //if (debug_on)   
         //  printf("EAST Wall Set\n");
       } break;
 
     case WEST :
-      if (this_node->column != 0) { 
+      if (COL != 0) { 
         LEFT = NULL;
         //if (debug_on)
         //  printf("WEST Wall Set\n");
@@ -1044,6 +979,9 @@ void set_wall (Node * this_node, const short dir) {
 
 
 /*** Solver Functions start here ***/
+
+
+
 
 
 
@@ -1103,100 +1041,6 @@ void move_dir (Maze * this_maze, short * x, short * y, short * dir) {
   /* update the direction */
   (*dir) = next_dir;
 }
-
-
-void visit_Node (Maze * this_maze, Stack * this_stack, short x, short y, short flag) {
-  /* NOTE: the flag parameter determines whether to update goal cells or not */
-  Node * this_node;   /* holds current node at x, y; also for reading from stack */
-  short northwall, eastwall, southwall, westwall;  /* for reading in wall data */
-
-  this_node = this_maze->map[x][y];
-  northwall = eastwall = southwall = westwall = FALSE;
-
-
-  /* this should physically check whether there is a wall using sensor, 
-     and update the passed values to TRUE or FALSE according to the walls. */
-  //read_walls(&northwall, &eastwall, &southwall, &westwall);
-
-
-  /* push to stack the cell on other side of wall if valid 
-     sets the walls as specified by the values checked above */
-  if (northwall) {
-    if (this_node->row != 0)
-      push (this_stack, this_maze->map[this_node->row-1][this_node->column]);
-    set_wall(this_node, NORTH);
-  }
-  if (eastwall) {
-    if (this_node->column != SIZE-1)
-      push (this_stack, this_maze->map[this_node->row][this_node->column+1]);
-    set_wall(this_node, EAST);
-  }
-  if (southwall) {
-    if (this_node->row != SIZE-1)
-      push (this_stack, this_maze->map[this_node->row+1][this_node->column]);
-    set_wall(this_node, SOUTH);
-  }
-  if (westwall) {
-    if (this_node->column != 0)
-      push (this_stack, this_maze->map[this_node->row][this_node->column-1]);
-    set_wall(this_node, WEST);
-  }
-
-  /* push this node itself, as it was updated */
-  push(this_stack, this_node);
-    
-  
-  /* pop until the stack is empty, and call flood_fill on that node */  
-  while (!is_empty_Stack(this_stack)) {
-    pop(this_stack, &this_node);
-    /* NOTE: the flag parameter determines whether to update goal cells or not */
-    flood_fill(this_node, this_stack, flag);
-  }
-  
-  set_visited (this_node);
-
-}
-
-
-
-/*** Stack functions ***/
-
-// Checks if this_stack is empty
-int is_empty_Stack (Stack * this_stack) {
-
-  //printf("%d\n", this_stack->properties[SPI]);
-
-  if (this_stack->properties[SPI] == 0)
-    return 1;
-  else return 0;
-}
-
-// Pops the top element of this_stack
-void pop (Stack * this_stack, Node ** npp) {
-
-
-  short index;
-
-  index = this_stack->properties[SPI] - 1;
-
-  *npp = this_stack->the_stack[index];
-
-  this_stack->properties[SPI] -= 1;
-
-}
-
-// Pushes an element to the top of this_stack
-void push (Stack * this_stack, Node * this_node) {
-
-  short index;
-
-  index = this_stack->properties[SPI];
-
-  this_stack->the_stack[index] = this_node;
-
-  this_stack->properties[SPI] += 1;
-}
-
 
 
 

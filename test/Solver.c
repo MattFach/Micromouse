@@ -67,7 +67,7 @@ void visit_Node (Maze * this_maze, Stack * this_stack, short x, short y,
                 short wallval, char flag) {
 
   Node * this_node;   /* holds current node at x, y; also for reading from stack */
-  short northwall, eastwall, southwall, westwall;  /* for reading in wall data */
+  int northwall, eastwall, southwall, westwall;  /* for reading in wall data */
 
   this_node = this_maze->map[x][y];
   northwall = eastwall = southwall = westwall = 0;
