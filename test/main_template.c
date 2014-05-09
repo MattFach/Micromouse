@@ -3,6 +3,9 @@
  *
  */
 #include <stdlib.h>
+#include "Maze.h"
+#include "Maze.c"
+#include "Stack.c"
 
 
 /*** Maple Pins Constants ***/
@@ -120,65 +123,65 @@ void loop()
   motor_test();
   drive_straight();
   //delay(100);
-  //	turn_left();
+  //  turn_left();
 
-  //	delay(2000);
-	
-	
-	//int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
-				    // and right90 is pin 3
-				    // if this isn't true, change the pin declarations up top
-				    // (BOTH mine and James's)
-				    // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
-	
-	//left = analogRead(sense_1);
-	//right = analogRead(sense_5);
-	//straight = analogRead(sense_3);
-	
-	if(analogRead(sense_3) > 3000)     // if the mouse gets too close to the wall before turning, decrease the value
-	{			// if the mouse starts to turn before getting close enough, increase delay
-				// delay can be found in the next three if statements, all delay functions
-				// must have the same delqy value;
-		about_face();
-		
-		
-	}
-	/*
-	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
-	{			// if the mouse turns where it shouldnt, decrease the value (including below)
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_right;
-	}
-	
-	else if(left < 3000)  //  if the mouse doesnt see the opening, increase the value
-	{			// if the mouse turns where it shouldnt, decrease the value
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_left();
-	}
-	
-	else
-	{
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_left();
-		turn_left();
-	}
+  //  delay(2000);
+  
+  
+  //int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
+            // and right90 is pin 3
+            // if this isn't true, change the pin declarations up top
+            // (BOTH mine and James's)
+            // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
+  
+  //left = analogRead(sense_1);
+  //right = analogRead(sense_5);
+  //straight = analogRead(sense_3);
+  
+  if(analogRead(sense_3) > 3000)     // if the mouse gets too close to the wall before turning, decrease the value
+  {     // if the mouse starts to turn before getting close enough, increase delay
+        // delay can be found in the next three if statements, all delay functions
+        // must have the same delqy value;
+    about_face();
+    
+    
+  }
+  /*
+  else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
+  {     // if the mouse turns where it shouldnt, decrease the value (including below)
+    
+    delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+    
+    turn_right;
+  }
+  
+  else if(left < 3000)  //  if the mouse doesnt see the opening, increase the value
+  {     // if the mouse turns where it shouldnt, decrease the value
+    
+    delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+    
+    turn_left();
+  }
+  
+  else
+  {
+    delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+    
+    turn_left();
+    turn_left();
+  }
 */
   
-	 /*
-	 // figure out how fast mouse can slow down 
-	 // need decision(algorithm) function 
-	 // need mapping function 
-	 // need function to determine current grid location
-	 // need turning functions 
-	 // need exploration(algorithm) function 
-	 // need straight line function
-	 // need race function (premapped maze) <- shortest path
-	 // ^ race function may need to be called at dead end (to find closest door)
+   /*
+   // figure out how fast mouse can slow down 
+   // need decision(algorithm) function 
+   // need mapping function 
+   // need function to determine current grid location
+   // need turning functions 
+   // need exploration(algorithm) function 
+   // need straight line function
+   // need race function (premapped maze) <- shortest path
+   // ^ race function may need to be called at dead end (to find closest door)
    
   
   
@@ -254,10 +257,10 @@ void turn_left() // point turn
   digitalWrite(L_bkw, LOW);
   
   pwmWrite(right_enable, 17000);  // decrese the value for a slower turn, increase it to go faster
-  pwmWrite(left_enable, 15000);	  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(left_enable, 15000);   // decrese the value for a slower turn, increase it to go faster
   
   delay(200);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
-  	       // before slowing down enough (same thing in turn_right)
+           // before slowing down enough (same thing in turn_right)
   
   digitalWrite(R_fwd, HIGH);
   
@@ -294,18 +297,18 @@ void turn_right()  // point turn
 
 void about_face()  // because, why not?
 {
-  	int value = R_encoder_val;
-  	
-  	digitalWrite(L_fwd, LOW);
-  	digitalWrite(L_bkw, HIGH);
-  	
-  	pwmWrite(R_enable_val, 15000);
-  	pwmWrite(L_enable_val, 15000);
-  	
-  	while(R_encoder_val - value < 17);  // *********increase value to turn more***********
-  	
-  	digitalWrite(L_bkw, LOW);
-  	digitalWrite(L_fwd, HIGH);
+    int value = R_encoder_val;
+    
+    digitalWrite(L_fwd, LOW);
+    digitalWrite(L_bkw, HIGH);
+    
+    pwmWrite(R_enable_val, 15000);
+    pwmWrite(L_enable_val, 15000);
+    
+    while(R_encoder_val - value < 17);  // *********increase value to turn more***********
+    
+    digitalWrite(L_bkw, LOW);
+    digitalWrite(L_fwd, HIGH);
 }
 
 void GoStraight()
@@ -313,7 +316,7 @@ void GoStraight()
 //int currentVoltage;
 int voltageChange = 5;
 int D1 = analogRead(L45sensor) - analogRead(R45sensor);
-delay(20);						//  delay MIGHT need to be longer
+delay(20);            //  delay MIGHT need to be longer
 int D2 = analogRead(L45sensor) - analogRead(R45sensor);
 
 if(D1 == D2)
