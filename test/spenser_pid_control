@@ -1,0 +1,31 @@
+void drive_straight(double left_sensor, double right_sensor)
+{
+    static double previous_error = 0;
+    static double Kp = 1, Ki = .1, Kd = 1; // constants for scaling PID effects 
+    static double error, P, I = 0, D = 0, total;  // error variables
+            
+        // must tune Kp, Ki, and Kd values
+        
+        error = right_sensor - left_sensor;
+                
+        P = error * Kp;
+                    
+        I = I + error;    
+                        
+        I = I * Ki;
+                            
+        D = (error - previous_error) * Kd;
+                                
+        total = P+I+D;
+          {
+              L_enable_val -= (total);
+                
+              R_enable_val += (total);
+
+              analogWrite(left_enable, L_enable_val); // enable pins and values
+                                                      // must be global
+              analogWrite(right_enable, R_enable_val);
+                                            // maple doesn't use analog write
+                                            // adjust for maple code
+          }
+}
