@@ -9,6 +9,8 @@
 
 const int sleft = 0;
 const int sright = 1;
+int left, right, straight;
+
 
 
 /*** Maple Pins Constants ***/
@@ -121,8 +123,12 @@ void setup()
 void loop()
 {
   
-
-
+  /*
+  SerialUSB.print(analogRead(L90sensor));
+  SerialUSB.print("   ");
+  SerialUSB.println(analogRead(R90sensor));
+  delay(200);
+*/
   motor_test();
   drive_straight();
   //delay(100);
@@ -137,11 +143,62 @@ void loop()
 				    // (BOTH mine and James's)
 				    // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
 	
-	//left = analogRead(sense_1);
-	//right = analogRead(sense_5);
-	//straight = analogRead(sense_3);
+
 	
 	if(analogRead(sense_3) > 3800)     // if the mouse gets too close to the wall before turning, decrease the value
+	{			// if the mouse starts to turn before getting close enough, increase delay
+				// delay can be found in the next three if statements, all delay functions
+				// must have the same delqy value;
+           // led(true);
+            while(analogRead(sense_3) > 2400)
+            {
+              drive_straight();
+            }
+           // about_face();
+           // led(false);
+           // left = analogRead(sense_1);
+	  //  right = analogRead(sense_5);
+	  //  straight = analogRead(sense_3);
+		about_face();
+
+               // delay(1000);
+                
+		
+		
+	}
+
+/*
+	
+
+        if(R_encoder_val >= 60)
+        {
+	
+	if(right < 1200)  // if the mouse doesnt see the opening, increase the value (including below)
+	{			// if the mouse turns where it shouldnt, decrease the value (including below)
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_right;
+	}
+	
+	else if(left < 1200)  //  if the mouse doesnt see the opening, increase the value
+	{			// if the mouse turns where it shouldnt, decrease the value
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_left();
+	}
+
+        else if(straight < 2000)
+        {
+             R_encoder_val = 0;
+          L_encoder_val = 0;
+        }
+        
+        else about_face;
+        */
+/*
+        else if(analogRead(sense_3) > 3800)     // if the mouse gets too close to the wall before turning, decrease the value
 	{			// if the mouse starts to turn before getting close enough, increase delay
 				// delay can be found in the next three if statements, all delay functions
 				// must have the same delqy value;
@@ -153,28 +210,11 @@ void loop()
 		about_face();
 
                // delay(1000);
-                
-		
-		
-	}
-
+        }
+*/
+       
+      //  }
 	/*
-	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
-	{			// if the mouse turns where it shouldnt, decrease the value (including below)
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_right;
-	}
-	
-	else if(left < 3000)  //  if the mouse doesnt see the opening, increase the value
-	{			// if the mouse turns where it shouldnt, decrease the value
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_left();
-	}
-	
 	else
 	{
 		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
@@ -381,33 +421,26 @@ void drive_straight() // use 4 sensors?
     return;
    }
   
-  left90 = analogRead(L90sensor);  // verify sensor orientation
-  right90 = analogRead(R90sensor);
+  left90 = analogRead(sense_1);  // verify sensor orientation
+  right90 = analogRead(sense_3);
   //left45 = analogRead(sense_2);
   // right45 = analogRead(sense_3);
-  /*
+  
   SerialUSB.print(left90);
   SerialUSB.print("   ");
-  SerialUSB.print(right90);
-  SerialUSB.print("   ");
+  SerialUSB.println(right90);
+  //SerialUSB.print("   ");
 
-    */
+    
   
   if(right90 > 1200 && left90 > 1200)
   {
+     led(true);
     error = right90 - left90;
     offset = 0;
     good = true;
-    led(false);
-    if(right90 > left90)
-    {
-      side = 1;
-    }
-    
-    else
-    {
-      side = -1;
-    }
+   
+
   }
  /* 
   else if(abs(right45 - left45) > 500)
@@ -456,9 +489,9 @@ void drive_straight() // use 4 sensors?
     offset = R_encoder_val - L_encoder_val;
     
     good = false;
-    if(flag)
+    if(0)
     {
-      led(true);
+     
       Break(1000);
       flag--;
     }
@@ -475,6 +508,7 @@ void drive_straight() // use 4 sensors?
     //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
     moveOne(sright);
     moveOne(sleft);
+     led(true);
     return;
   }
   /*
@@ -485,7 +519,7 @@ void drive_straight() // use 4 sensors?
   }
 */
   {
-    previous_time = time_now;
+    //previous_time = time_now;
     
     L_enable_val -= (total);
 
@@ -511,7 +545,7 @@ void drive_straight() // use 4 sensors?
     }
    //   constrain(R_enable_val, 5000, 15000);
      
-    if(previous_time - millis() > 100)
+  //  if(previous_time - millis() > 100)
     {
     SerialUSB.print(left90);
     SerialUSB.print("   ");
@@ -520,7 +554,7 @@ void drive_straight() // use 4 sensors?
     //SerialUSB.println(analogRead(sense_3));
     previous_time = millis();
     }
-    
+    delay(100);
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
     analogWrite(right_enable, R_enable_val);    // different functions on maple
@@ -578,5 +612,26 @@ void moveOne(int choice)
     digitalWrite(R_fwd, HIGH);
   }
   
+}
+
+void decide()
+{
+  if(right < 1200)  // if the mouse doesnt see the opening, increase the value (including below)
+	{			// if the mouse turns where it shouldnt, decrease the value (including below)
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_right;
+	}
+	
+	else if(left < 1200)  //  if the mouse doesnt see the opening, increase the value
+	{			// if the mouse turns where it shouldnt, decrease the value
+		
+		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
+		
+		turn_left();
+	}
+
+        else about_face;
 }
 
