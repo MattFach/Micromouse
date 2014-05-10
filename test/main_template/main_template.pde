@@ -118,8 +118,10 @@ void setup()
 void loop()
 {
   
+turn_right();
 
-
+delay(1000);
+/*
   motor_test();
   drive_straight();
   //delay(100);
@@ -138,14 +140,23 @@ void loop()
 	//right = analogRead(sense_5);
 	//straight = analogRead(sense_3);
 	
-	if(analogRead(sense_3) > 3000)     // if the mouse gets too close to the wall before turning, decrease the value
+	if(analogRead(sense_3) > 3800)     // if the mouse gets too close to the wall before turning, decrease the value
 	{			// if the mouse starts to turn before getting close enough, increase delay
 				// delay can be found in the next three if statements, all delay functions
 				// must have the same delqy value;
+
+            while(analogRead(sense_3) > 2400)
+            {
+              drive_straight();
+            }
 		about_face();
+
+               // delay(1000);
+                
 		
 		
 	}
+*/
 	/*
 	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
 	{			// if the mouse turns where it shouldnt, decrease the value (including below)
@@ -256,47 +267,57 @@ void motor_test()  // motor testing function
 
 void turn_left() // point turn
 {
+  int encoder_number = L_encoder_val;
+  
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 17000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 15000);  // decrese the value for a slower turn, increase it to go faster
   pwmWrite(left_enable, 15000);	  // decrese the value for a slower turn, increase it to go faster
   
-  delay(200);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
+  //delay(200);  // decrease delay if mouse pauses too much, increase it if the mouse tries to turn
   	       // before slowing down enough (same thing in turn_right)
   
   digitalWrite(R_fwd, HIGH);
   
   digitalWrite(L_bkw, HIGH);
   
-  delay(400);  // tune this value for complete turn ************* ///////////////////
+  //delay(400);
+  while(L_encoder_val - encoder_number < 17);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
+  R_encoder_val = 0;
+  L_encoder_val = 0;
 }
 
 void turn_right()  // point turn
 {
+  int encoder_number = L_encoder_val;
+  
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
   digitalWrite(L_bkw, LOW);
   
-  pwmWrite(right_enable, 17000);  // decrese the value for a slower turn, increase it to go faster
+  pwmWrite(right_enable, 15000);  // decrese the value for a slower turn, increase it to go faster
   pwmWrite(left_enable, 15000);   // decrese the value for a slower turn, increase it to go faster
   
-  delay(100);
+  //delay(100);
   
   digitalWrite(L_fwd, HIGH);
   
   digitalWrite(R_bkw, HIGH);
   
-  delay(400);  // tune this value for complete turn ******* ///////////////////
+  while(L_encoder_val - encoder_number < 19);
+  //delay(400);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
+  R_encoder_val = 0;
+  L_encoder_val - 0;
 }
 
 
@@ -307,32 +328,19 @@ void about_face()  // because, why not?
   	digitalWrite(L_fwd, LOW);
   	digitalWrite(L_bkw, HIGH);
   	
-  	pwmWrite(R_enable_val, 15000);
-  	pwmWrite(L_enable_val, 15000);
+  	pwmWrite(right_enable, 15000);
+  	pwmWrite(left_enable, 15000);
   	
-  	while(R_encoder_val - value < 17);  // *********increase value to turn more***********
+  	while(R_encoder_val - value < 41);  // *********increase value to turn more***********
   	
   	digitalWrite(L_bkw, LOW);
-  	digitalWrite(L_fwd, HIGH);
+  	digitalWrite(R_fwd, LOW);
+  R_encoder_val = 0;
+  L_encoder_val = 0;
+  
 }
 
 
-
-void ChangeRight(int* change)
-{
-int currentVoltage = analogRead(RightMotor);
-if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
-*change = -(*change);                                             //voltage wanted
-pwmWrite(RightMotor, currentVoltage*16 + *change);
-}
-
-void ChangeLeft(int* change)
-{
-int currentVoltage = analogRead(LeftMotor);
-if(currentVoltage == 0 || currentVoltage > 3125)  //change 1020 value to max 
-*change = -(*change);                                             //voltage wanted
-pwmWrite(LeftMotor, currentVoltage*16 + *change);
-}
 
 void drive_straight() // use 4 sensors?
 {
@@ -348,6 +356,19 @@ void drive_straight() // use 4 sensors?
   bool good;
   int left90, left45, right45, right90;
   double Kp = .85, Kd = .1;
+  /*
+  static int encoder_number = 0;
+  
+  if(R_encoder_val - encoder_number > 60)
+  {
+    encoder_number = R_encoder_val;
+    
+    digitalWrite(R_fwd, LOW);
+    digitalWrite(L_fwd, LOW);
+    
+    delay(1000);
+  }
+  */
   
   if(!previous_time)
   {
@@ -449,7 +470,7 @@ void drive_straight() // use 4 sensors?
       R_enable_val = 16000;
     }
    //   constrain(R_enable_val, 5000, 15000);
-      
+     /* 
     if(previous_time - millis() > 100)
     {
     SerialUSB.print(L_enable_val);
@@ -459,6 +480,7 @@ void drive_straight() // use 4 sensors?
     SerialUSB.println(analogRead(sense_3));
     previous_time = millis();
     }
+    */
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
     analogWrite(right_enable, R_enable_val);    // different functions on maple
