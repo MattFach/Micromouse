@@ -7,6 +7,9 @@
 #include "Maze.c"
 #include "Stack.c"
 
+const int sleft = 0;
+const int sright = 1;
+
 
 /*** Maple Pins Constants ***/
 
@@ -118,10 +121,8 @@ void setup()
 void loop()
 {
   
-turn_right();
 
-delay(1000);
-/*
+
   motor_test();
   drive_straight();
   //delay(100);
@@ -156,7 +157,7 @@ delay(1000);
 		
 		
 	}
-*/
+
 	/*
 	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
 	{			// if the mouse turns where it shouldnt, decrease the value (including below)
@@ -317,7 +318,7 @@ void turn_right()  // point turn
   digitalWrite(L_fwd, LOW);
   digitalWrite(R_bkw, LOW);
   R_encoder_val = 0;
-  L_encoder_val - 0;
+  L_encoder_val = 0;
 }
 
 
@@ -356,6 +357,9 @@ void drive_straight() // use 4 sensors?
   bool good;
   int left90, left45, right45, right90;
   double Kp = .85, Kd = .1;
+  int side = 1;
+  static int offset = 0;
+  static int flag = 1;
   /*
   static int encoder_number = 0;
   
@@ -389,22 +393,41 @@ void drive_straight() // use 4 sensors?
 
     */
   
-  if(1)
+  if(right90 > 1200 && left90 > 1200)
   {
     error = right90 - left90;
-    biggest = 0;
+    offset = 0;
     good = true;
+    led(false);
+    if(right90 > left90)
+    {
+      side = 1;
+    }
+    
+    else
+    {
+      side = -1;
+    }
   }
-  
+ /* 
   else if(abs(right45 - left45) > 500)
   {
     error = right45 - left45;
     biggest = 0;
     good = true;
   }
-  
+  */
   else
  { 
+   /*
+   biggest = -left90;
+   base = -2200;
+   
+   if(right90 > left90)
+   {
+     biggest = right90;
+     base = 2200;
+   }
     
    biggest = -left90; 
    
@@ -428,8 +451,17 @@ void drive_straight() // use 4 sensors?
       last_big = biggest;
       return;
     }
+    */
+    if(!offset)
+    offset = R_encoder_val - L_encoder_val;
     
     good = false;
+    if(flag)
+    {
+      led(true);
+      Break(1000);
+      flag--;
+    }
     
   }
   
@@ -440,10 +472,18 @@ void drive_straight() // use 4 sensors?
   
   else
   {
-    last_big = biggest;
-    total = (last_big - biggest) * Kp;
+    //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
+    moveOne(sright);
+    moveOne(sleft);
+    return;
   }
-
+  /*
+  else
+  {
+    total = (biggest - last_big) * Kp;
+        last_big = biggest;
+  }
+*/
   {
     previous_time = time_now;
     
@@ -470,25 +510,73 @@ void drive_straight() // use 4 sensors?
       R_enable_val = 16000;
     }
    //   constrain(R_enable_val, 5000, 15000);
-     /* 
+     
     if(previous_time - millis() > 100)
     {
-    SerialUSB.print(L_enable_val);
+    SerialUSB.print(left90);
     SerialUSB.print("   ");
-    SerialUSB.print(R_enable_val);
-    SerialUSB.print("   ");
-    SerialUSB.println(analogRead(sense_3));
+    SerialUSB.println(right90);
+    //SerialUSB.print("   ");
+    //SerialUSB.println(analogRead(sense_3));
     previous_time = millis();
     }
-    */
+    
     analogWrite(left_enable, L_enable_val);     // enable pins and values 
                                                 // must be global
     analogWrite(right_enable, R_enable_val);    // different functions on maple
   }
 }
 
+void Break(int time)
+{
+    digitalWrite(R_fwd, LOW);
+    digitalWrite(L_fwd, LOW);
+    delay(time);
+    digitalWrite(R_fwd, HIGH);
+    digitalWrite(L_fwd, HIGH);
+}
 
-
-
-
+void led(bool choice)
+{
+  if(choice)
+  {
+    digitalWrite(18, HIGH);
+  }
+  
+  else
+  {
+    digitalWrite(18, LOW);
+  }
+}
+    
+void moveOne(int choice)
+{
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  
+  int R = R_encoder_val;
+  int L = L_encoder_val;
+  
+  if(choice)
+  {
+    while(R_encoder_val - R < 1)
+    {
+      digitalWrite(R_fwd, HIGH);
+    }
+    
+    digitalWrite(L_fwd, HIGH);
+    
+  }
+  
+  else
+  {
+    while(L_encoder_val - L < 1)
+    {
+      digitalWrite(L_fwd, HIGH);
+    }
+    
+    digitalWrite(R_fwd, HIGH);
+  }
+  
+}
 
