@@ -2,7 +2,7 @@
  * Main Template
  *
  */
-#include <stdlib.h>
+
 #include "Maze.h"
 #include "Maze.c"
 #include "Stack.c"
@@ -186,10 +186,15 @@ void loop()
   
   
   */
-  
-  
-  
 }
+
+
+void solver_loop() {
+
+
+
+}
+
 
 void left_interrupt()
 {
@@ -311,37 +316,7 @@ void about_face()  // because, why not?
   	digitalWrite(L_fwd, HIGH);
 }
 
-void GoStraight()
-{
-//int currentVoltage;
-int voltageChange = 5;
-int D1 = analogRead(L45sensor) - analogRead(R45sensor);
-delay(20);						//  delay MIGHT need to be longer
-int D2 = analogRead(L45sensor) - analogRead(R45sensor);
 
-if(D1 == D2)
-;
-else if(D1 < D2)
-{
-if(voltageChange < 0)
-{
-  ChangeLeft(&voltageChange);
-}
-else
-{
-  ChangeRight(&voltageChange);
-}
-}
-else if(D1 > D2)
-{
-if(voltageChange < 0)
-ChangeRight(&voltageChange);
-else
-{
-  ChangeLeft(&voltageChange);
-}
-}
-}
 
 void ChangeRight(int* change)
 {
@@ -384,12 +359,12 @@ void drive_straight() // use 4 sensors?
   left90 = analogRead(L90sensor);  // verify sensor orientation
   right90 = analogRead(R90sensor);
   //left45 = analogRead(sense_2);
- // right45 = analogRead(sense_3);
+  // right45 = analogRead(sense_3);
   /*
   SerialUSB.print(left90);
-SerialUSB.print("   ");
-SerialUSB.print(right90);
-SerialUSB.print("   ");
+  SerialUSB.print("   ");
+  SerialUSB.print(right90);
+  SerialUSB.print("   ");
 
     */
   
