@@ -122,15 +122,18 @@ void setup()
 void loop()
 {
 
+  if (0)
+     print_sensors();
+  
   /*
    motor_test();
-   print_sensors();
+
     
     setLeftPWM(LEFT_BASE_SPEED);
     setRightPWM(RIGHT_BASE_SPEED);
     */
  
-  
+  else {
    found_dest = FALSE;
    direction = NORTH;
   
@@ -152,7 +155,7 @@ void loop()
     delay(200);
    }
    
-   
+  }
   
   
   //motor_test();
@@ -390,8 +393,8 @@ void drive_straight() // use 4 sensors?
   
   left90 = analogRead(L90sensor);  // verify sensor orientation
   right90 = analogRead(R90sensor);
-  //left45 = analogRead(sense_2);
-  // right45 = analogRead(sense_3);
+  right45 = analogRead(sense_3);
+  error = right45 - analogRead(sense_2);
   /*
   SerialUSB.print(left90);
   SerialUSB.print("   ");
@@ -405,16 +408,8 @@ void drive_straight() // use 4 sensors?
     error = right90 - left90;
     offset = 0;
     good = true;
-    led(false);
-    if(right90 > left90)
-    {
-      side = 1;
-    }
-    
-    else
-    {
-      side = -1;
-    }
+   // led(false);
+
   }
  /* 
   else if(abs(right45 - left45) > 500)
@@ -424,6 +419,18 @@ void drive_straight() // use 4 sensors?
     good = true;
   }
   */
+  else if(right90 > RIGHT_WALL_SENSED) //error < 600 && right45 > 1000)
+  {
+    error = right90 - CENTER;
+    good = true;
+  }
+  
+  else if(left90 > LEFT_WALL_SENSED)
+  {
+    error = CENTER - left90;
+    good = true;
+  }
+  
   else
  { 
    /*
@@ -463,7 +470,7 @@ void drive_straight() // use 4 sensors?
     offset = R_encoder_val - L_encoder_val;
     
     good = false;
-    if(flag)
+    if(0)
     {
       
       Break(1000);
@@ -481,8 +488,9 @@ void drive_straight() // use 4 sensors?
   {
     //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
     led(true);
-    moveOne();
-    /*
+    //moveOne();
+    //Break(1000);
+    
     if (toggle) {
       moveOne(sright);
       moveOne(sleft);
@@ -493,7 +501,7 @@ void drive_straight() // use 4 sensors?
       moveOne(sright);
       toggle = TRUE;
     }
-    */
+    
     return;
   }
   /*
@@ -584,26 +592,27 @@ void led(bool choice)
   }
 }
     
-void moveOne()
+void moveOne(bool choice)
 {
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_fwd, LOW);
   
-  bool right_flag = true;
-  bool left_flag = true;
+ // bool right_flag = true;
+ // bool left_flag = true;
   
   
   int R = R_encoder_val;
   int L = L_encoder_val;
   
- // if(choice)
-  while(right_flag && left_flag)
+  if(choice)
+ // while(right_flag && left_flag)
   {
-    if(R_encoder_val - R < 1)
+    while(R_encoder_val - R < 1)
     {
       digitalWrite(R_fwd, HIGH);
     }
-    
+      digitalWrite(R_fwd, LOW);
+    /*
     else
     {
       digitalWrite(R_fwd, LOW);
@@ -621,9 +630,9 @@ void moveOne()
       digitalWrite(L_fwd, LOW);
       left_flag = false;
     }
-    
+    */
   }
-  /*
+  
   else
   {
     while(L_encoder_val - L < 1)
@@ -631,9 +640,9 @@ void moveOne()
       digitalWrite(L_fwd, HIGH);
     }
     
-    digitalWrite(R_fwd, HIGH);
+    digitalWrite(L_fwd, HIGH);
   }
-  */
+  
 }
 
 // 1200 == there is a wall
@@ -832,6 +841,7 @@ void move_single_cell() {
   
   keep_moving = true;
   do {
+    motor_test();
    drive_straight(); 
    if (L_encoder_val >= ONECELL) {
    
