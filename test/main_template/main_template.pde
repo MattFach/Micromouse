@@ -128,20 +128,13 @@ void loop()
     //center();
     //delay(1500);
   }
-  /*
-   motor_test();
 
-    
-    setLeftPWM(LEFT_BASE_SPEED);
-    setRightPWM(RIGHT_BASE_SPEED);
-    */
- 
   else {
-   found_dest = FALSE;
-   direction = NORTH;
+    found_dest = FALSE;
+    direction = NORTH;
   
-
-  while (!found_dest) {
+    // Begin Trip from start to goal
+    while (!found_dest) {
     
     led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
@@ -158,88 +151,140 @@ void loop()
     //delay(200);
     Stop_Moving();
     //delay(200);
+    
+    check_goal_reached(&x, &y, &found_dest);
    }
    
-  }
-  
-  
-  //motor_test();
-  //drive_straight();
-  //delay(100);
-  //	turn_left();
-
-  //	delay(2000);
-	
-	
-	//int left, right, straight;  // make sure the left90 sensor is pin 4, left45 is pin 5, right45 is 9
-				    // and right90 is pin 3
-				    // if this isn't true, change the pin declarations up top
-				    // (BOTH mine and James's)
-				    // my senors from 1 through 5 correspond to from left to right (90,45,0,45,90)
-	
-	//left = analogRead(sense_1);
-	//right = analogRead(sense_5);
-	//straight = analogRead(sense_3);
-	/*
-	if(analogRead(sense_3) > 3800)     // if the mouse gets too close to the wall before turning, decrease the value
-	{			// if the mouse starts to turn before getting close enough, increase delay
-				// delay can be found in the next three if statements, all delay functions
-				// must have the same delqy value;
-
-            while(analogRead(sense_3) > 2400)
-            {
-              drive_straight();
-            }
-		about_face();
-
-               // delay(1000);
-                
-		
-		
-	}
-        */
-	/*
-	else if(right < 3000)  // if the mouse doesnt see the opening, increase the value (including below)
-	{			// if the mouse turns where it shouldnt, decrease the value (including below)
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_right;
-	}
-	
-	else if(left < 3000)  //  if the mouse doesnt see the opening, increase the value
-	{			// if the mouse turns where it shouldnt, decrease the value
-		
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_left();
-	}
-	
-	else
-	{
-		delay(0);  // increase by 100's, if the mouse goes too far, increase by 10's or 20's
-		
-		turn_left();
-		turn_left();
-	}
-*/
-  
-	 /*
-	 // figure out how fast mouse can slow down 
-	 // need decision(algorithm) function 
-	 // need mapping function 
-	 // need function to determine current grid location
-	 // need turning functions 
-	 // need exploration(algorithm) function 
-	 // need straight line function
-	 // need race function (premapped maze) <- shortest path
-	 // ^ race function may need to be called at dead end (to find closest door)
    
+   goal_x = x;
+   goal_y = y;
+   
+   // Read walls of Center Cells 
+   visit_node(my_maze, my_stack, x, y, FALSE);
+   set_center_walls(x, y);
+   delay(200);
+   reflood_from_goal();
+   found_dest = FALSE;
+   about_face();
+   
+   // Trip from GOAL TO START
+   while (!found_dest) {
+    
+    led(true);
+    visit_node(my_maze, my_stack, x, y, TRUE);
+    //delay(200);
+    led(false);
+    change_dir(my_maze, &x, &y, &direction);
+    //delay(200);
+    //center();
+    //delay(200);
+    
+    // everything above this is good
+    motor_test();
+    move_single_cell();
+    //delay(200);
+    Stop_Moving();
+    //delay(200);
+    
+    check_start_reached(&x, &y, &found_dest);
+   }
+   
+ }
   
-  
-  */
+ 
 }
 
+// enterable directions
+// 8, 8 : NORTH or WEST
+// 8, 7 : NORTH or EAST
+// 7, 7 : SOUTH or EAST
+// 7, 8 : SOUTH or WEST
+
+void set_center_walls(short entered_x, short entered_y) {
+ 
+  // 8, 8 : NORTH or WEST
+ if (entered_x = SIZE/2 && entered_y == SIZE/2) {
+ 
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], WEST);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     EAST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], WEST);
+ }
+
+ // 8, 7 : NORTH or EAST
+ if (entered_x = SIZE/2 && entered_y == SIZE/2 - 1) {
+ 
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], WEST);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     EAST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+ }
+ 
+// 7, 7 : SOUTH or EAST
+ if (entered_x = SIZE/2 && entered_y == SIZE/2 - 1) {
+ 
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], WEST);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     EAST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+ }
+ 
+ 
+// 7, 8 : SOUTH or WEST
+ if (entered_x = SIZE/2 && entered_y == SIZE/2 - 1) {
+ 
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], WEST);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], NORTH);
+   set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], WEST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+ }
+  
+}
+
+
+void reflood_from_goal() {
+ 
+  for (int i = 0; i < SIZE; i++) 
+      for (int j = 0; j < SIZE; j++)
+        my_maze->map[i][j]->floodval = LARGEVAL;
+      
+    /* set the start value to zero */
+    set_value(my_maze->map[START_X][START_Y], 0);
+
+    /* push the neighbors of start cell to stack 
+       then pop everything until all cells updated*/
+    push_open_neighbors(my_maze->map[START_X][START_Y], my_stack);
+    while(!is_empty_Stack(my_stack)) {
+      pop(my_stack, &temp);
+      if (!(temp->row == 15 && temp->column == 0))
+        flood_fill(temp, my_stack, TRUE);
+    }
+  
+}
+
+void reflood_from_start() {
+ /*** Reflooding process from start to goal */
+    /* Set everything to 0 ! */
+    for (int i = 0; i < SIZE; i++) 
+      for (int j = 0; j < SIZE; j++)
+         my_maze->map[i][j]->floodval = 0;
+    
+    /* with start as zero, update everycell's floodval */
+    push_open_neighbors(my_maze->map[goal_x][goal_y], my_stack);
+    while(!is_empty_Stack(my_stack)) {
+      pop(my_stack, &temp);
+      flood_fill(temp, my_stack, FALSE);
+    }
+  
+}
 
 void print_sensors(){
     SerialUSB.println(analogRead(sense_1));
@@ -1074,4 +1119,28 @@ void center()
   }
 }
     
+    
+    
+
+/* CHECKING GOALS */
+/* update flag for whether goal cell was reached */
+void check_start_reached (short * x, short * y, short * found_start) {
+
+  if (*x == START_X && *y == START_Y) {
+    *(found_start) = TRUE;
+    //printf("Start Coorinates Reached: %d, %d\n", *x, *y);
+  }
+}
+
+/* update flag for whether goal cell was reached */
+void check_goal_reached (short * x, short * y, short * found_goal) {
+
+  if (*x == SIZE / 2 || *x == SIZE / 2 - 1) {
+    if (*y == SIZE / 2 || *y == SIZE / 2 - 1) {
+      *(found_goal) = TRUE;
+      //printf("Goal Coordinates Reached: %d, %d\n", *x, *y); 
+    }
+  }
+}
+
 
