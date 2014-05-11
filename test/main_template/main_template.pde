@@ -145,19 +145,19 @@ void loop()
     
     led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
-    delay(200);
+    //delay(200);
     led(false);
     change_dir(my_maze, &x, &y, &direction);
-    delay(200);
+    //delay(200);
     //center();
-    delay(200);
+    //delay(200);
     
     // everything above this is good
     motor_test();
     move_single_cell();
-    delay(200);
+    //delay(200);
     Stop_Moving();
-    delay(200);
+    //delay(200);
    }
    
   }
@@ -442,8 +442,14 @@ void drive_straight() // use 4 sensors?
     error = (right45 - left45) / 2;
     good = true;
   }
+/*  
+  else if(right90 > RIGHT_TWO_AWAY)
+  {
+    error = RIGHT_TWO_AWAY  - right90;
+    good = true;
+  }
   
-  
+  */
   else
  { 
    /*
