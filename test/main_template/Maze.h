@@ -50,7 +50,7 @@
 #define NO 'n'
 
 /* Main template constants */
-#define ONECELL 61
+#define ONECELL 60
 #define LEFT_WALL_SENSED 1700
 #define FRONT_WALL_SENSED 2200
 #define RIGHT_WALL_SENSED 1700
@@ -61,7 +61,7 @@
 #define TURN_LEFT_COUNT 17
 #define TURN_RIGHT_COUNT 18
 #define ABOUT_FACE_COUNT 37
-#define CENTER 2100
+#define CENTER 2000
 
 
 typedef struct Node { 

@@ -394,7 +394,8 @@ void drive_straight() // use 4 sensors?
   left90 = analogRead(L90sensor);  // verify sensor orientation
   right90 = analogRead(R90sensor);
   right45 = analogRead(sense_3);
-  error = right45 - analogRead(sense_2);
+  left45 = analogRead(sense_2);
+  //error = right45 - left45;
   /*
   SerialUSB.print(left90);
   SerialUSB.print("   ");
@@ -430,6 +431,13 @@ void drive_straight() // use 4 sensors?
     error = CENTER - left90;
     good = true;
   }
+  
+  else if(right45 > 1200  && left45 > 1200)
+  {
+    error = (right45 - left45) / 2;
+    good = true;
+  }
+  
   
   else
  { 
