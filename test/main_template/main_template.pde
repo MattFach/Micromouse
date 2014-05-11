@@ -56,6 +56,7 @@ short direction;    /* keeps track of direction that mouse is moving in */
 short x, y; /* keeps track of current row, col value mouse is in within maze */
 short goal_x, goal_y; /* keeps track of goal's x, y, once found */
 short exit_solver_loop;
+boolean keep_moving;
 
 
 /*** Setup ***/
@@ -114,12 +115,14 @@ void setup()
   direction = NORTH;
   found_dest = FALSE;
   exit_solver_loop = FALSE;
+  keep_moving = true;
   
 }
 
 
 void loop()
 {
+  
   /*
     SerialUSB.println(analogRead(sense_1));
     SerialUSB.println(analogRead(sense_3));
@@ -127,24 +130,27 @@ void loop()
     SerialUSB.println();
     SerialUSB.println();
     SerialUSB.println();
-    delay(3000);
+    delay(1000);
     */
+    
  
    found_dest = FALSE;
-    direction = NORTH;
+   direction = NORTH;
   
-  //Trip from goal to start 
+
   while (!found_dest) {
     
-    if (direction == NORTH)
-      led(true);
-    else led(false);
-
-    
+    led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
+    delay(1000);
+    led(false);
     change_dir(my_maze, &x, &y, &direction);
     delay(1000);
+    
+    // everything above this is good
+    Start_Moving();
     move_single_cell();
+    delay(1000);
     Stop_Moving();
     delay(2000);
    }
@@ -232,12 +238,23 @@ void loop()
 void left_interrupt()
 {
   ++ L_encoder_val;
+  
+
 }
 
 void right_interrupt()
 {
   ++ R_encoder_val;
+  
+  
 }
+
+void encoder_reset() {
+ L_encoder_val = 0;
+ R_encoder_val = 0; 
+}
+
+
 
 void motor_test()  // motor testing function
 {
@@ -369,12 +386,14 @@ void drive_straight() // use 4 sensors?
   // must convert voltages to distances and adjust code
   
   static int previous_error = 0; 
-  int error;  // error values
+  static int previous_time = 0;
   static int last_big = 0;
+  
+  
+  int error;  // error values
   int biggest;
   double total;
   int time_now;
-  static int previous_time = 0;
   bool good;
   int left90, left45, right45, right90;
   double Kp = .85, Kd = .1;
@@ -479,7 +498,7 @@ void drive_straight() // use 4 sensors?
     good = false;
     if(flag)
     {
-      led(true);
+      
       Break(1000);
       flag--;
     }
@@ -494,6 +513,7 @@ void drive_straight() // use 4 sensors?
   else
   {
     //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
+    led(true);
     moveOne(sright);
     moveOne(sleft);
     return;
@@ -627,14 +647,11 @@ void visit_node(Maze * this_maze, Stack * this_stack, short x, short y, short fl
   
   // read walls and set
   // read left
-  if (analogRead(sense_1) > 2000) 
-    wall_on_left = TRUE;
+    wall_on_left = check_left_wall();
  
-  if (analogRead(sense_3) > 2000)
-    wall_on_front = TRUE;
+    wall_on_front = check_front_wall();
    
-  if (analogRead(sense_5) > 2000)
-    wall_on_right = TRUE;  
+    wall_on_right = check_right_wall();
 
   if (direction == NORTH) {
   
@@ -803,10 +820,98 @@ void change_dir (Maze * this_maze, short * x, short * y, short * dir) {
 
 void move_single_cell() {
   
+  /*
   for (int i = 0; i < 30; i++) {
      moveOne(sright);
      moveOne(sleft); 
   }
+  */
+  
+  keep_moving = true;
+  do {
+   drive_straight(); 
+   if (L_encoder_val >= ONECELL) {
+   
+     keep_moving = false;
+     encoder_reset();
+     
+     Stop_Moving();
+   }
+  } while(keep_moving);
+ 
   
 }
+
+
+/* sensor wall reading functions */
+
+int read_left_sensor() {
+ 
+  return analogRead(sense_1);
+}
+
+
+short check_left_wall() {
+  if (analogRead(sense_1) > LEFT_WALL_SENSED)
+    return TRUE;
+    
+  return FALSE;
+}
+
+int read_center_sensor() {
+ 
+  return analogRead(sense_3);
+}
+
+short check_front_wall() {
+  if (analogRead(sense_3) > FRONT_WALL_SENSED)
+    return TRUE;
+    
+  return FALSE;
+}
+
+int read_right_sensor() {
+ 
+  return analogRead(sense_5);
+}
+
+short check_right_wall() {
+  if (analogRead(sense_5) > RIGHT_WALL_SENSED)    
+    return TRUE;
+    
+  return FALSE;
+}
+
+/*
+void Arvind_PID (void) {
+  
+  int rightSensor, leftSensor;
+ 
+ 
+ 
+  rightSensor = read_right_sensor();
+  leftSensor = read_left_sensor(); 
+  
+  // both walls 
+  if (leftSensor > LEFT_WALL_SENSED && rightSensor > RIGHT_WALL_SENSED) {
+  
+     errorP = rightSensor - leftSensor - 63;  // 63 is left and right offset when mouse in middle
+     errorD = errorP - oldErrorP;
+     
+  }
+  
+  // left wall only 
+  else if(leftSensor > hasLeftWall) {
+   
+    errorP = 2 * (leftMiddle
+     
+  }
+
+
+  
+}
+*/
+
+
+
 
