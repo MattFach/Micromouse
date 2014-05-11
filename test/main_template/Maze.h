@@ -51,10 +51,16 @@
 
 /* Main template constants */
 #define ONECELL 61
-#define LEFT_WALL_SENSED 1200
-#define FRONT_WALL_SENSED 1900
-#define RIGHT_WALL_SENSED 1200
-
+#define LEFT_WALL_SENSED 1600
+#define FRONT_WALL_SENSED 2200
+#define RIGHT_WALL_SENSED 1600
+#define LEFT_BASE_SPEED 20000
+#define RIGHT_BASE_SPEED 20000
+#define P_VAL 5
+#define D_VAL 0
+#define TURN_LEFT_COUNT 17
+#define TURN_RIGHT_COUNT 18
+#define ABOUT_FACE_COUNT 37
 
 
 typedef struct Node { 

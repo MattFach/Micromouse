@@ -121,12 +121,16 @@ void setup()
 
 void loop()
 {
-  
-  
-   //print_sensors();
+
+  /*
+   motor_test();
+   print_sensors();
     
-    
+    setLeftPWM(LEFT_BASE_SPEED);
+    setRightPWM(RIGHT_BASE_SPEED);
+    */
  
+  
    found_dest = FALSE;
    direction = NORTH;
   
@@ -135,18 +139,20 @@ void loop()
     
     led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
-    delay(400);
+    delay(200);
     led(false);
     change_dir(my_maze, &x, &y, &direction);
-    delay(400);
+    delay(200);
     
     // everything above this is good
-    Start_Moving();
+    motor_test();
     move_single_cell();
-    delay(400);
+    delay(200);
     Stop_Moving();
-    delay(400);
+    delay(200);
    }
+   
+   
   
   
   //motor_test();
@@ -229,7 +235,9 @@ void loop()
 
 void print_sensors(){
     SerialUSB.println(analogRead(sense_1));
+    SerialUSB.println(analogRead(sense_2));
     SerialUSB.println(analogRead(sense_3));
+    SerialUSB.println(analogRead(sense_4));
     SerialUSB.println(analogRead(sense_5));
     SerialUSB.println();
     SerialUSB.println();
@@ -260,54 +268,6 @@ void encoder_reset() {
 
 
 
-void motor_test()  // motor testing function
-{
-  //pwmWrite(right_enable, R_enable_val);
-  //pwmWrite(left_enable, L_enable_val);
-  
-  digitalWrite(R_bkw, LOW);
-  digitalWrite(L_bkw, LOW);
-  
-  digitalWrite(R_fwd, HIGH);
-  digitalWrite(L_fwd, HIGH);
-  /*
-  delay(1000);
-  
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_fwd, LOW);
-  
-  delay(100);
-  
-  digitalWrite(R_bkw, HIGH);
-  digitalWrite(L_bkw, HIGH);
-  
-  delay(1000);
-  
-  digitalWrite(R_fwd, LOW);
-  digitalWrite(L_bkw, LOW);
-  
-  delay(100);
-  
-  digitalWrite(R_bkw, HIGH);
-  digitalWrite(L_fwd, HIGH);
-  
-  delay(1000);
-  
-  digitalWrite(R_bkw, LOW);
-  digitalWrite(L_fwd, LOW);
-  
-  delay(100);
-  
-  digitalWrite(R_bkw, HIGH);
-  digitalWrite(L_bkw, LOW);
-  
-  delay(1000);
-  
-  digitalWrite(R_bkw, LOW);
-  digitalWrite(L_bkw, LOW);
-  */
-}
-
 void turn_left() // point turn
 {
   int encoder_number = L_encoder_val;
@@ -328,7 +288,7 @@ void turn_left() // point turn
   digitalWrite(L_bkw, HIGH);
   
   //delay(400);
-  while(L_encoder_val - encoder_number < 17);  // tune this value for complete turn ************* ///////////////////
+  while(L_encoder_val - encoder_number < TURN_LEFT_COUNT);  // tune this value for complete turn ************* ///////////////////
 
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_bkw, LOW);
@@ -354,7 +314,7 @@ void turn_right()  // point turn
   
   digitalWrite(R_bkw, HIGH);
   
-  while(L_encoder_val - encoder_number < 19);
+  while(L_encoder_val - encoder_number < TURN_RIGHT_COUNT);
   //delay(400);  // tune this value for complete turn ******* ///////////////////
 
   digitalWrite(L_fwd, LOW);
@@ -370,11 +330,14 @@ void about_face()  // because, why not?
   	
   	digitalWrite(L_fwd, LOW);
   	digitalWrite(L_bkw, HIGH);
+  	digitalWrite(R_fwd, HIGH);
+  	digitalWrite(R_bkw, LOW);
+  
   	
   	pwmWrite(right_enable, 15000);
   	pwmWrite(left_enable, 15000);
   	
-  	while(R_encoder_val - value < 41);  // *********increase value to turn more***********
+  	while(R_encoder_val - value < ABOUT_FACE_COUNT);  // *********increase value to turn more***********
   	
   	digitalWrite(L_bkw, LOW);
   	digitalWrite(R_fwd, LOW);
@@ -400,7 +363,7 @@ void drive_straight() // use 4 sensors?
   int time_now;
   bool good;
   int left90, left45, right45, right90;
-  double Kp = .85, Kd = .1;
+  double Kp = P_VAL, Kd = D_VAL;
   int side = 1;
   static int offset = 0;
   static int flag = 1;
@@ -437,7 +400,7 @@ void drive_straight() // use 4 sensors?
 
     */
   
-  if(right90 > 1200 && left90 > 1200)
+  if(right90 > RIGHT_WALL_SENSED && left90 > LEFT_WALL_SENSED)
   {
     error = right90 - left90;
     offset = 0;
@@ -518,9 +481,11 @@ void drive_straight() // use 4 sensors?
   {
     //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
     led(true);
+    moveOne();
+    /*
     if (toggle) {
       moveOne(sright);
-      moveOne(sleft);  
+      moveOne(sleft);
       toggle = FALSE;
     }
     else {
@@ -528,7 +493,7 @@ void drive_straight() // use 4 sensors?
       moveOne(sright);
       toggle = TRUE;
     }
-    
+    */
     return;
   }
   /*
@@ -540,6 +505,8 @@ void drive_straight() // use 4 sensors?
 */
   {
     previous_time = time_now;
+    
+    /* ////////////////////////////////////////////////////////////////
     
     L_enable_val -= (total);
 
@@ -563,6 +530,8 @@ void drive_straight() // use 4 sensors?
     {
       R_enable_val = 16000;
     }
+    
+    */ ///////////////////////////////////////////////////////////////
    //   constrain(R_enable_val, 5000, 15000);
      
     if(previous_time - millis() > 100)
@@ -575,9 +544,9 @@ void drive_straight() // use 4 sensors?
     previous_time = millis();
     }
     
-    analogWrite(left_enable, L_enable_val);     // enable pins and values 
+    analogWrite(left_enable, LEFT_BASE_SPEED - total);     // enable pins and values 
                                                 // must be global
-    analogWrite(right_enable, R_enable_val);    // different functions on maple
+    analogWrite(right_enable, RIGHT_BASE_SPEED + total);    // different functions on maple
   }
 }
 
@@ -615,26 +584,46 @@ void led(bool choice)
   }
 }
     
-void moveOne(int choice)
+void moveOne()
 {
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_fwd, LOW);
+  
+  bool right_flag = true;
+  bool left_flag = true;
   
   
   int R = R_encoder_val;
   int L = L_encoder_val;
   
-  if(choice)
+ // if(choice)
+  while(right_flag && left_flag)
   {
-    while(R_encoder_val - R < 1)
+    if(R_encoder_val - R < 1)
     {
       digitalWrite(R_fwd, HIGH);
     }
     
-    digitalWrite(L_fwd, HIGH);
+    else
+    {
+      digitalWrite(R_fwd, LOW);
+      right_flag = false;
+    }
+    
+    if(L_encoder_val - L < 1)
+    {
+    
+      digitalWrite(L_fwd, HIGH);
+    }
+    
+    else
+    {
+      digitalWrite(L_fwd, LOW);
+      left_flag = false;
+    }
     
   }
-  
+  /*
   else
   {
     while(L_encoder_val - L < 1)
@@ -644,7 +633,7 @@ void moveOne(int choice)
     
     digitalWrite(R_fwd, HIGH);
   }
-  
+  */
 }
 
 // 1200 == there is a wall
@@ -896,17 +885,49 @@ short check_right_wall() {
   return FALSE;
 }
 
-/*
-void Arvind_PID (void) {
+int read_diag_left_sensor() {
+ 
+  return analogRead(sense_2);
+}
+
+int read_diag_right_sensor() {
+ 
+  return analogRead(sense_4);
+}
+
+
+/* motor control functions */
+
+void setLeftPWM(int val) {
+
+  pwmWrite(left_enable, val);	  // decrese the value for a slower turn, increase it to go faster
+}
+
+
+void setRightPWM(int val){
   
-  int rightSensor, leftSensor;
- 
- 
- 
-  rightSensor = read_right_sensor();
+  pwmWrite(right_enable, val);  // decrese the value for a slower turn, increase it to go faster
+}
+
+
+
+/*** new PID ***/
+
+void new_PID (void) {
+  
+  static int oldErrorP = 0;
+  double P = 0.85;
+  double D = 0; 
+  int errorP, errorD, totalError;
+  int leftSensor, rightSensor, diagLeftSensor, diagRightSensor;
+  
+  
   leftSensor = read_left_sensor(); 
+  rightSensor = read_right_sensor();
+  diagLeftSensor = read_diag_left_sensor();
+  diagRightSensor = read_diag_right_sensor();
   
-  // both walls 
+  // case with both walls 
   if (leftSensor > LEFT_WALL_SENSED && rightSensor > RIGHT_WALL_SENSED) {
   
      errorP = rightSensor - leftSensor - 63;  // 63 is left and right offset when mouse in middle
@@ -914,18 +935,88 @@ void Arvind_PID (void) {
      
   }
   
-  // left wall only 
-  else if(leftSensor > hasLeftWall) {
+  // case with left wall only 
+  else if(leftSensor > LEFT_WALL_SENSED) {
    
-    errorP = 2 * (leftMiddle
-     
+    errorP = 2 * (diagLeftSensor - leftSensor);
+    errorD = errorP - oldErrorP;
   }
-
-
+  
+  else if (rightSensor  > RIGHT_WALL_SENSED) {
+   
+    errorP = 2 * (rightSensor - diagRightSensor);
+    errorD = errorP - oldErrorP;
+  }
+  
+  else if (leftSensor < LEFT_WALL_SENSED && rightSensor < RIGHT_WALL_SENSED) {
+   
+    errorP = 0;
+    errorD = 0;
+  }
+  
+  totalError = P * errorP * D * errorD;
+  oldErrorP = errorP;
+  setLeftPWM(LEFT_BASE_SPEED - totalError);
+  setRightPWM(RIGHT_BASE_SPEED + totalError); 
   
 }
-*/
 
+
+
+
+
+
+/* Old Stuff */
+
+
+
+void motor_test()  // motor testing function
+{
+  //pwmWrite(right_enable, R_enable_val);
+  //pwmWrite(left_enable, L_enable_val);
+  
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  digitalWrite(R_fwd, HIGH);
+  digitalWrite(L_fwd, HIGH);
+  /*
+  delay(1000);
+  
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_fwd, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_bkw, HIGH);
+  digitalWrite(L_bkw, HIGH);
+  
+  delay(1000);
+  
+  digitalWrite(R_fwd, LOW);
+  digitalWrite(L_bkw, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_bkw, HIGH);
+  digitalWrite(L_fwd, HIGH);
+  
+  delay(1000);
+  
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_fwd, LOW);
+  
+  delay(100);
+  
+  digitalWrite(R_bkw, HIGH);
+  digitalWrite(L_bkw, LOW);
+  
+  delay(1000);
+  
+  digitalWrite(R_bkw, LOW);
+  digitalWrite(L_bkw, LOW);
+  */
+}
 
 
 
