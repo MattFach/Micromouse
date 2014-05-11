@@ -123,8 +123,11 @@ void loop()
 {
 
   if (0)
-     print_sensors();
-  
+  {
+   print_sensors();
+    //center();
+    //delay(1500);
+  }
   /*
    motor_test();
 
@@ -145,6 +148,8 @@ void loop()
     delay(200);
     led(false);
     change_dir(my_maze, &x, &y, &direction);
+    delay(200);
+    //center();
     delay(200);
     
     // everything above this is good
@@ -432,7 +437,7 @@ void drive_straight() // use 4 sensors?
     good = true;
   }
   
-  else if(right45 > 1200  && left45 > 1200)
+  else if(right45 > 1000  && left45 > 1000)
   {
     error = (right45 - left45) / 2;
     good = true;
@@ -648,7 +653,7 @@ void moveOne(bool choice)
       digitalWrite(L_fwd, HIGH);
     }
     
-    digitalWrite(L_fwd, HIGH);
+    digitalWrite(L_fwd, LOW);
   }
   
 }
@@ -1037,4 +1042,30 @@ void motor_test()  // motor testing function
 }
 
 
+void center()
+{
+  int right45 = analogRead(sense_4);
+  int left45 = analogRead(sense_2);
+  
+  if(right45 > 1300  && left45 > 1300)
+  {
+    while(abs(right45 - left45) > 100)
+    { 
+      if(right45 - left45 > 0)
+      {
+        moveOne(sleft);
+      }
+      
+      else
+      {
+        moveOne(sright);
+      }
+      
+      left45 = analogRead(sense_2);
+      
+      right45 = analogRead(sense_4);
+    }
+  }
+}
+    
 
