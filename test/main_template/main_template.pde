@@ -119,19 +119,12 @@ void setup()
   
 }
 
-
 void loop()
 {
   
-  /*
-    SerialUSB.println(analogRead(sense_1));
-    SerialUSB.println(analogRead(sense_3));
-    SerialUSB.println(analogRead(sense_5));
-    SerialUSB.println();
-    SerialUSB.println();
-    SerialUSB.println();
-    delay(1000);
-    */
+  
+   //print_sensors();
+    
     
  
    found_dest = FALSE;
@@ -142,10 +135,10 @@ void loop()
     
     led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
-    delay(1000);
+    delay(500);
     led(false);
     change_dir(my_maze, &x, &y, &direction);
-    delay(1000);
+    delay(500);
     
     // everything above this is good
     Start_Moving();
@@ -231,6 +224,17 @@ void loop()
   
   
   */
+}
+
+
+void print_sensors(){
+    SerialUSB.println(analogRead(sense_1));
+    SerialUSB.println(analogRead(sense_3));
+    SerialUSB.println(analogRead(sense_5));
+    SerialUSB.println();
+    SerialUSB.println();
+    SerialUSB.println();
+    delay(200); 
 }
 
 
