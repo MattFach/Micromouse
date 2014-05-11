@@ -135,17 +135,17 @@ void loop()
     
     led(true);
     visit_node(my_maze, my_stack, x, y, FALSE);
-    delay(500);
+    delay(400);
     led(false);
     change_dir(my_maze, &x, &y, &direction);
-    delay(500);
+    delay(400);
     
     // everything above this is good
     Start_Moving();
     move_single_cell();
-    delay(1000);
+    delay(400);
     Stop_Moving();
-    delay(2000);
+    delay(400);
    }
   
   
@@ -392,7 +392,7 @@ void drive_straight() // use 4 sensors?
   static int previous_error = 0; 
   static int previous_time = 0;
   static int last_big = 0;
-  
+  static short toggle = FALSE;
   
   int error;  // error values
   int biggest;
@@ -518,8 +518,17 @@ void drive_straight() // use 4 sensors?
   {
     //total = (R_encoder_val - L_encoder_val - offset) * 150 + 60*side;
     led(true);
-    moveOne(sright);
-    moveOne(sleft);
+    if (toggle) {
+      moveOne(sright);
+      moveOne(sleft);  
+      toggle = FALSE;
+    }
+    else {
+      moveOne(sleft);
+      moveOne(sright);
+      toggle = TRUE;
+    }
+    
     return;
   }
   /*
@@ -610,6 +619,7 @@ void moveOne(int choice)
 {
   digitalWrite(R_fwd, LOW);
   digitalWrite(L_fwd, LOW);
+  
   
   int R = R_encoder_val;
   int L = L_encoder_val;
