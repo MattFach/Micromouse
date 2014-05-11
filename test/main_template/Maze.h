@@ -50,7 +50,7 @@
 #define NO 'n'
 
 /* Main template constants */
-#define ONECELL 61
+#define ONECELL 60
 #define LEFT_WALL_SENSED 1700
 #define FRONT_WALL_SENSED 2200
 #define RIGHT_WALL_SENSED 1700
