@@ -221,30 +221,30 @@ void set_center_walls(short entered_x, short entered_y) {
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     NORTH);
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     EAST);
    set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
-   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], EAST);
  }
  
 // 7, 7 : SOUTH or EAST
- if (entered_x = SIZE/2 && entered_y == SIZE/2 - 1) {
+ if (entered_x = SIZE/2 - 1 && entered_y == SIZE/2 - 1) {
  
    set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], SOUTH);
    set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], WEST);
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     NORTH);
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2],     EAST);
    set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
-   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], EAST);
  }
  
  
 // 7, 8 : SOUTH or WEST
- if (entered_x = SIZE/2 && entered_y == SIZE/2 - 1) {
+ if (entered_x = SIZE/2 - 1 && entered_y == SIZE/2) {
  
    set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], SOUTH);
    set_wall(my_maze->map[SIZE/2][SIZE/2 - 1], WEST);
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], NORTH);
    set_wall(my_maze->map[SIZE/2 - 1][SIZE/2 - 1], WEST);
    set_wall(my_maze->map[SIZE/2][SIZE/2], SOUTH);
-   set_wall(my_maze->map[SIZE/2][SIZE/2], WEST);
+   set_wall(my_maze->map[SIZE/2][SIZE/2], EAST);
  }
   
 }
